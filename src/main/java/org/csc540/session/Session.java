@@ -21,7 +21,7 @@ public class Session {
 	static {
 		if (dbConnection == null) {
 			try {
-				Class.forName(DBReader.getPropertyValue(DB_DRIVER));
+				Class.forName("oracle.jdbc.driver.OracleDriver");
 			} catch(ClassNotFoundException e) {
 				flag = false;
 				e.printStackTrace();

@@ -11,6 +11,11 @@
 # Mac
 .DS_Store
 
+logs/
+
+src/main/resources/database/db.properties
+src/main/resources/log4j.properties
+
 # Maven
 log/
 target/
