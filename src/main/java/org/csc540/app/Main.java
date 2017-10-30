@@ -1,8 +1,6 @@
 package org.csc540.app;
 
 import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.Statement;
 import java.util.Scanner;
 
 import org.apache.log4j.Logger;
@@ -26,19 +24,13 @@ public class Main {
 				System.out.println("Connection is null");
 			}
 
-			/*
-			 * String query = " select tablespace_name from user_tablespaces";
-			 * Statement stmt = conn.createStatement(); ResultSet set =
-			 * stmt.executeQuery(query); while (set.next()) { String data =
-			 * set.getString("TABLESPACE_NAME"); System.out.println(data); }
-			 */
-			
 			scanner = new Scanner(System.in);
+
 			// Phase 1 - Login
 			System.out.println("::: Start Page :::");
 			System.out.println("Enter the options for following actions: \n1. Login \n2. Exit\nEnter your option:");
 			Integer choice = scanner.nextInt();
-			
+
 			Users currUser = null;
 			if (choice == 1) {
 				System.out.println("Enter UserId:");
@@ -46,7 +38,25 @@ public class Main {
 				System.out.println("Enter Password:");
 				String password = scanner.next();
 				currUser = LoginProcessor.login(conn, userId, password);
-				System.out.println(currUser.toString());
+				// System.out.println(currUser.toString());
+
+				// Control flow to respective Home Page based on Role
+				if (currUser.getRole() == "P") {
+
+					// REDIRECT TO PROFESSOR HOME PAGE
+
+				} else if (currUser.getRole() == "S") {
+					StudentAccount.checkStudentRole(userId, scanner);
+
+				} else {
+					if (currUser.getRole() == null) {
+						LOG.error("Null Role encountered for the User\n");
+						throw new Exception("No role specified for the User");
+					} else {
+						LOG.error("Unknown Role encountered for the User\n");
+						throw new Exception("Unknown Role specified for the User");
+					}
+				}
 			} else if (choice == 2) {
 				if (currUser == null) {
 					LOG.error("Trying to exit from the system without a user login\n");
@@ -56,7 +66,6 @@ public class Main {
 			} else {
 				LOG.info("Invalid Option");
 			}
-			
 
 			Session.closeConnetion();
 		} catch (Exception e) {
