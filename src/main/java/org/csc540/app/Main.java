@@ -2,15 +2,15 @@ package org.csc540.app;
 
 import java.sql.Connection;
 import java.util.Scanner;
-
 import org.apache.log4j.Logger;
+
 import org.csc540.pojo.Users;
 import org.csc540.processor.LoginProcessor;
 import org.csc540.session.Session;
 
 public class Main {
 
-	public static final Logger LOG = Logger.getLogger(Main.class);
+	final static Logger LOG = Logger.getLogger(Main.class);
 
 	private static Connection conn;
 	private static Scanner scanner;
@@ -23,6 +23,7 @@ public class Main {
 			} else {
 				System.out.println("Connection is null");
 			}
+
 
 			scanner = new Scanner(System.in);
 
@@ -66,6 +67,7 @@ public class Main {
 			} else {
 				LOG.info("Invalid Option");
 			}
+
 
 			Session.closeConnetion();
 		} catch (Exception e) {
