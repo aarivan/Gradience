@@ -14,8 +14,8 @@ public class DBReader {
 		InputStream stream = null;
 		try {
 			prop = new Properties();
-			stream = new FileInputStream("/Users/shiprasingh/Desktop/Gradience-master/src/main/resources/database/db.properties");
-			//stream = ClassLoader.class.getResourceAsStream("/database/db.properties");
+//			stream = new FileInputStream("/Users/shiprasingh/Desktop/Gradience-master/src/main/resources/database/db.properties");
+			stream = ClassLoader.class.getResourceAsStream("/database/db.properties");
 			
 			prop.load(stream);
 		} catch (FileNotFoundException fe) {

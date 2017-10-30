@@ -3,7 +3,7 @@ package org.csc540.app;
 import java.sql.Connection;
 import java.util.Scanner;
 import org.apache.log4j.Logger;
-
+import org.csc540.helper.RoleConstants;
 import org.csc540.pojo.Users;
 import org.csc540.processor.LoginProcessor;
 import org.csc540.session.Session;
@@ -24,7 +24,6 @@ public class Main {
 				System.out.println("Connection is null");
 			}
 
-
 			scanner = new Scanner(System.in);
 
 			// Phase 1 - Login
@@ -42,11 +41,11 @@ public class Main {
 				// System.out.println(currUser.toString());
 
 				// Control flow to respective Home Page based on Role
-				if (currUser.getRole() == "P") {
+				if (currUser.getRole().equalsIgnoreCase(RoleConstants.PROFFESOR)) {
 
 					// REDIRECT TO PROFESSOR HOME PAGE
 
-				} else if (currUser.getRole() == "S") {
+				} else if (currUser.getRole().equalsIgnoreCase(RoleConstants.STUDENT)) {
 					StudentAccount.checkStudentRole(userId, scanner);
 
 				} else {

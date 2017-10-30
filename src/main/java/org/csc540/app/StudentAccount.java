@@ -14,7 +14,7 @@ public class StudentAccount {
 			// Redirected Student Page
 			Student currStudent = StudentProcessor.isTA(userId);
 			if (currStudent != null) {
-				if (currStudent.isIs_ta()) {
+				if (currStudent.isIs_ta().equalsIgnoreCase("T")) {
 					// Get the choice for the user
 					selectHomePage(currStudent, scanner);
 				} else {

@@ -19,7 +19,7 @@ public class StudentProcessor {
 		LOG.info("Processor to check if the given user: " + userId + " is TA.");
 		try {
 			Connection conn = Session.getConnection();
-			String check_ta_query = "SELECT * FROM STUDENT WHERE USERS_ID = '" + userId;
+			String check_ta_query = "SELECT * FROM STUDENT WHERE USERS_ID = '" + userId + "'";
 			PreparedStatement ps = conn.prepareStatement(check_ta_query);
 			ResultSet check_ta_result = ps.executeQuery();
 
@@ -45,19 +45,19 @@ public class StudentProcessor {
 
 				String userId = set.getString(DBFieldConstants.STUDENT_USERS_ID);
 				temp.setUserId(userId);
-				String f_name = set.getString(DBFieldConstants.STUDENT_F_NAME);
+				String f_name = set.getString(DBFieldConstants.STUDENT_FIRST_NAME);
 				temp.setF_name(f_name);
-				String l_name = set.getString(DBFieldConstants.STUDENT_L_NAME);
+				String l_name = set.getString(DBFieldConstants.STUDENT_LAST_NAME);
 				temp.setL_name(l_name);
 				String address = set.getString(DBFieldConstants.STUDENT_ADDRESS);
 				temp.setAddress(address);
-				String phone_number = set.getString(DBFieldConstants.STUDENT_P_NUMBER);
+				String phone_number = set.getString(DBFieldConstants.STUDENT_PHONE_NUMBER);
 				temp.setPhone_number(phone_number);
-				String level = set.getString(DBFieldConstants.STUDENT_LEVEL);
+				String level = set.getString(DBFieldConstants.STUDENT_LEVEL_S);
 				temp.setLevel(level);
-				String email = set.getString(DBFieldConstants.STUDENT_EMAIL);
+				String email = set.getString(DBFieldConstants.STUDENT_EMAIL_ID);
 				temp.setEmail(email);
-				boolean is_ta = set.getBoolean(DBFieldConstants.STUDENT_IS_TA);
+				String is_ta = set.getString(DBFieldConstants.STUDENT_IS_TA);
 				temp.setIs_ta(is_ta);
 				result.add(temp);
 			}

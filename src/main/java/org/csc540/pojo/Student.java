@@ -8,7 +8,7 @@ public class Student {
 	private String phone_number;
 	private String level;
 	private String email;
-	private boolean is_ta;
+	private String is_ta;
 
 	public String getF_name() {
 		return f_name;
@@ -66,11 +66,11 @@ public class Student {
 		this.email = email;
 	}
 
-	public boolean isIs_ta() {
+	public String isIs_ta() {
 		return is_ta;
 	}
 
-	public void setIs_ta(boolean is_ta) {
+	public void setIs_ta(String is_ta) {
 		this.is_ta = is_ta;
 	}
 
