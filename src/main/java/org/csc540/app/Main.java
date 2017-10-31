@@ -15,6 +15,9 @@ public class Main {
 	private static Connection conn;
 	private static Scanner scanner;
 
+	/**
+	 * @param args
+	 */
 	public static void main(String args[]) {
 		try {
 			conn = Session.getConnection();
@@ -38,16 +41,12 @@ public class Main {
 				System.out.println("Enter Password:");
 				String password = scanner.next();
 				currUser = LoginProcessor.login(conn, userId, password);
-				// System.out.println(currUser.toString());
 
 				// Control flow to respective Home Page based on Role
 				if (currUser.getRole().equalsIgnoreCase(RoleConstants.PROFFESOR)) {
-
 					// REDIRECT TO PROFESSOR HOME PAGE
-
 				} else if (currUser.getRole().equalsIgnoreCase(RoleConstants.STUDENT)) {
 					StudentAccount.checkStudentRole(userId, scanner);
-
 				} else {
 					if (currUser.getRole() == null) {
 						LOG.error("Null Role encountered for the User\n");
@@ -67,11 +66,9 @@ public class Main {
 				LOG.info("Invalid Option");
 			}
 
-
 			Session.closeConnetion();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-
 }

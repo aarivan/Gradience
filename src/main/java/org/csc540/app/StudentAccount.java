@@ -147,46 +147,4 @@ public class StudentAccount {
 		}
 	
 	}
-
-	/*public static void studentHomePage1(Student currStudent, Scanner scanner) {
-		
-		System.out.println("::: Student Home Page :::");
-		System.out.println(
-				"Enter the options for following actions: \n1. View/Edit Profile \n2. View Courses \n3. Log Out \nEnter your option:");
-		Integer choice = scanner.nextInt();
-		
-		if (choice == 1) {
-			System.out.println("### Press 0 to Go Back ###\n");
-			System.out.println("1. First Name:" + currStudent.getF_name());
-			System.out.println("2. Last Name:" + currStudent.getL_name());
-			System.out.println("3. Employee ID:" + currStudent.getUserId());
-			System.out.println("4. Address:" + currStudent.getAddress());
-			System.out.println("5. Phone Number:" + currStudent.getPhone_number());
-			System.out.println("6. Email:" + currStudent.getEmail());
-			System.out.println("### Press the field name index to edit that field ###\nEnter your option:");
-			int newChoice = scanner.nextInt();
-			if (newChoice == 0) {
-				studentHomePage(currStudent,scanner);
-			}else if (newChoice == 1) {
-					System.out.println("Editting First name");
-					System.out.println("Enter the new First name:");
-					String new_F_name = scanner.next();
-					currStudent.setF_name(new_F_name);
-					
-			} 
-			else if (newChoice == 2) {
-				System.out.println("Editting First name");
-				System.out.println("Enter the new First name:");
-				String new_F_name = scanner.next();
-				currStudent.setF_name(new_F_name);
-				
-		} 
-		}else if (choice == 1) {
-			
-		} else if (choice == 3) {
-
-		} else {
-			LOG.info("Invalid Option");
-		}
-	}*/
 }
