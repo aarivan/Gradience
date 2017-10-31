@@ -52,12 +52,12 @@ public class StudentAccount {
 
 		if (choice == 1) {
 			System.out.println("### Press 0 to Go Back ###\n\n");
-			System.out.println("1. First Name:" + currStudent.getF_name());
-			System.out.println("2. Last Name:" + currStudent.getL_name());
-			System.out.println("3. Employee ID:" + currStudent.getUserId());
-			System.out.println("4. Address:" + currStudent.getAddress());
-			System.out.println("5. Phone Number:" + currStudent.getPhone_number());
-			System.out.println("6. Email:" + currStudent.getEmail());
+			System.out.println("1. First Name: \t\t" + currStudent.getF_name());
+			System.out.println("2. Last Name: \t\t" + currStudent.getL_name());
+			System.out.println("3. Employee ID: \t" + currStudent.getUserId());
+			System.out.println("4. Address: \t\t" + currStudent.getAddress());
+			System.out.println("5. Phone Number: \t" + currStudent.getPhone_number());
+			System.out.println("6. Email: \t\t" + currStudent.getEmail());
 		} else if (choice == 2) {
 
 		} else if (choice == 3) {
