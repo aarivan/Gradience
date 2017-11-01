@@ -1,8 +1,5 @@
 package org.csc540.app;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.util.List;
 import java.util.Scanner;
 
@@ -11,7 +8,6 @@ import org.csc540.pojo.Course;
 import org.csc540.pojo.CourseEnrollment;
 import org.csc540.pojo.Student;
 import org.csc540.processor.TeachingAssistantProcessor;
-import org.csc540.session.Session;
 
 public class TeachingAssistantAccount {
 	public static final Logger LOG = Logger.getLogger(TeachingAssistantAccount.class);
@@ -23,13 +19,26 @@ public class TeachingAssistantAccount {
 		Integer choice = scanner.nextInt();
 
 		if (choice == 1) {
-			System.out.println("### Press 0 to Go Back ###\n\n");
-			System.out.println("1. First Name: \t\t" + studentUser.getF_name());
-			System.out.println("2. Last Name: \t\t" + studentUser.getL_name());
-			System.out.println("3. Employee ID: \t" + studentUser.getUserId());
-			System.out.println("4. Address: \t\t" + studentUser.getAddress());
-			System.out.println("5. Phone Number: \t" + studentUser.getPhone_number());
-			System.out.println("6. Email: \t\t" + studentUser.getEmail());
+			viewProfileTA(studentUser);
+			System.out.println("Enter your choice(1-6) to edit the respective detail: ");
+			choice = scanner.nextInt();
+
+			while (choice != 0) {
+				switch (choice) {
+				case 1:
+					System.out.println("Enter First Name: ");
+					String firstName = scanner.next();
+					// TeachingAssistantProcessor.updateFirstName();
+				case 2:
+				case 3:
+				case 4:
+				case 5:
+				case 6:
+				default:
+						
+				}
+			}
+
 		} else if (choice == 2) {
 			System.out.println("### Press 0 to Go Back ###\n\n");
 			List<CourseEnrollment> taCourseList = null;
@@ -75,16 +84,28 @@ public class TeachingAssistantAccount {
 		}
 	}
 
+	private static void viewProfileTA(Student studentUser) {
+		System.out.println("### Press 0 to Go Back ###\n\n");
+		System.out.println("\n\n");
+		System.out.println("1. First Name: \t\t" + studentUser.getF_name());
+		System.out.println("2. Last Name: \t\t" + studentUser.getL_name());
+		System.out.println("3. Employee ID: \t" + studentUser.getUserId());
+		System.out.println("4. Address: \t\t" + studentUser.getAddress());
+		System.out.println("5. Phone Number: \t" + studentUser.getPhone_number());
+		System.out.println("6. Email: \t\t" + studentUser.getEmail());
+		System.out.println("\n\n");
+	}
+
 	public static void viewCourseDetails(String courseId, Scanner scanner) {
 		Course courseDetails = null;
 		courseDetails = TeachingAssistantProcessor.getCourseDetails(courseId);
 
 		System.out.println("\n\n");
-		
+
 		System.out.println("------------------------------------");
 		System.out.println("--------- " + courseId + " ---------");
 		System.out.println("------------------------------------");
-		
+
 		System.out.println("\n\n");
 		System.out.println("(*) Course Name :" + courseDetails.getCourseName());
 		System.out.println("(*) Course Start Date:" + courseDetails.getCourseStartDate());
@@ -93,7 +114,7 @@ public class TeachingAssistantAccount {
 		System.out.println("2.  View/Add TA");
 		System.out.println("3.  Enroll/Drop a Student ");
 		System.out.println("4.  View Report");
-		
+
 		System.out.println("Please enter the your choice for function to perform based on the above menu:");
 		String choice = scanner.next();
 	}

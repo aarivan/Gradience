@@ -36,7 +36,7 @@ public class StudentProcessor {
 		return null;
 	}
 
-	private static List<Student> convertResultSetToStudentPOJO(ResultSet set) {
+	public static List<Student> convertResultSetToStudentPOJO(ResultSet set) {
 		LOG.info("Converting ResultSet to Student POJO...");
 		List<Student> result = null;
 		try {
@@ -47,7 +47,7 @@ public class StudentProcessor {
 				String userId = set.getString(DBFieldConstants.STUDENT_USERS_ID);
 				temp.setUserId(userId);
 				String f_name = set.getString(DBFieldConstants.STUDENT_FIRST_NAME);
-				System.out.println(f_name+"f_name");
+				System.out.println(f_name + "f_name");
 				temp.setF_name(f_name);
 				String l_name = set.getString(DBFieldConstants.STUDENT_LAST_NAME);
 				temp.setL_name(l_name);
@@ -68,88 +68,70 @@ public class StudentProcessor {
 		}
 		return result;
 	}
-	
+
 	public static void updateStudentProfile1(String user_id, String new_F_name) throws SQLException {
 		Connection conn = null;
 		PreparedStatement ps = null;
-		System.out.println("updateStudentProfile"+user_id +new_F_name);
-		//String updateTableSQL = "UPDATE STUDENT\n" + 
-			//	"SET first_name = ?, last_name= ? ,address =? , ph_no=?,level_s=?,email_id=?,is_TA =?\n" + 
-			//	"WHERE users_id = '" + user_id + "'";
-				/*String updateTableSQL = "UPDATE STUDENT " + 
-				"SET first_name = '"+currStudent.getF_name()+"', last_name= '"+currStudent.getL_name()+"' ,address ='"+currStudent.getAddress()+"'"
-						+ " , ph_no='"+currStudent.getPhone_number()+"',level_s='"+currStudent.getLevel()+"'"
-								+ ",email_id='"+currStudent.getEmail()+"',is_TA ='"+currStudent.isIs_ta()+"'"
-										+ " WHERE users_id = '" + user_id + "'";*/
-		String updateTableSQL ="UPDATE STUDENT SET first_name =? WHERE USERS_ID = ?";
+		System.out.println("updateStudentProfile" + user_id + new_F_name);
+
+		String updateTableSQL = "UPDATE STUDENT SET first_name =? WHERE USERS_ID = ?";
 
 		try {
 			conn = Session.getConnection();
 			ps = conn.prepareStatement(updateTableSQL);
-            ps.setString(1, new_F_name);
-            ps.setString(2, user_id);
-            ps.execute();
-            System.out.println("first name set to " + new_F_name);
-			 
-			
-			 
-			 System.out.println("connection "+conn+"   ps"+ps);
+			ps.setString(1, new_F_name);
+			ps.setString(2, user_id);
+			ps.execute();
+			System.out.println("first name set to " + new_F_name);
 
-			/*ps.setString(1, currStudent.getF_name());
-			ps.setString(2, currStudent.getL_name());
-			ps.setString(3, currStudent.getAddress());
-			ps.setString(4, currStudent.getPhone_number());
-			ps.setString(5, currStudent.getLevel());
-			ps.setString(6, currStudent.getEmail());
-			ps.setString(7, currStudent.isIs_ta());
-			ps.setString(8, user_id);*/
-			
-		
-			
-		}  catch (Exception e) {
-            e.printStackTrace();
-        }
-		
-		
+			System.out.println("connection " + conn + "   ps" + ps);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
-	
+
 	public static void updateStudentProfile(Student currStudent) throws SQLException {
 		Connection conn = null;
 		PreparedStatement ps = null;
-		System.out.println("updateStudentProfile");
-		//String updateTableSQL = "UPDATE STUDENT\n" + 
-			//	"SET first_name = ?, last_name= ? ,address =? , ph_no=?,level_s=?,email_id=?,is_TA =?\n" + 
-			//	"WHERE users_id = '" + user_id + "'";
-				String updateTableSQL = "UPDATE STUDENT " + 
-				"SET first_name = '"+currStudent.getF_name()+"', last_name= '"+currStudent.getL_name()+"' ,address ='"+currStudent.getAddress()+"'"
-						+ " , ph_no='"+currStudent.getPhone_number()+"',level_s='"+currStudent.getLevel()+"'"
-								+ ",email_id='"+currStudent.getEmail()+"',is_TA ='"+currStudent.isIs_ta()+"'"
-										+ " WHERE users_id = '" + currStudent.getUserId() + "'";
-		
-		System.out.println(updateTableSQL);
+
+		String updateTableSQL = "UPDATE STUDENT " + "SET first_name = '" + currStudent.getF_name() + "', last_name= '"
+				+ currStudent.getL_name() + "' ,address ='" + currStudent.getAddress() + "'" + " , ph_no='"
+				+ currStudent.getPhone_number() + "',level_s='" + currStudent.getLevel() + "'" + ",email_id='"
+				+ currStudent.getEmail() + "',is_TA ='" + currStudent.isIs_ta() + "'" + " WHERE users_id = '"
+				+ currStudent.getUserId() + "'";
+
 		try {
 			conn = Session.getConnection();
 			ps = conn.prepareStatement(updateTableSQL);
-            
-            ps.execute();
-            System.out.println("Student updated ");
+			ps.execute();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
-			/*ps.setString(1, currStudent.getF_name());
-			ps.setString(2, currStudent.getL_name());
-			ps.setString(3, currStudent.getAddress());
-			ps.setString(4, currStudent.getPhone_number());
-			ps.setString(5, currStudent.getLevel());
-			ps.setString(6, currStudent.getEmail());
-			ps.setString(7, currStudent.isIs_ta());
-			ps.setString(8, user_id);*/
-			
-		
-			
-		}  catch (Exception e) {
-            e.printStackTrace();
-        }
-		
-		
+	}
+
+	public static Boolean validatingStudentDetails(String student_id, String student_fname, String student_lname) {
+		// TODO Auto-generated method stub
+		LOG.info("Processor to validate student details: " + student_id);
+		try {
+			Connection conn = Session.getConnection();
+			String check_stu_query = "SELECT * FROM STUDENT WHERE USERS_ID = '" + student_id + "'";
+			PreparedStatement ps = conn.prepareStatement(check_stu_query);
+			ResultSet check_stu_result = ps.executeQuery();
+
+			Student studentUser = null;
+			List<Student> list = convertResultSetToStudentPOJO(check_stu_result);
+			if (list.size() == 1) {
+				studentUser = list.get(0);
+
+			}
+			if(studentUser.getUserId().equals(student_id)&&studentUser.getF_name().equals(student_fname)&&studentUser.getL_name().equals(student_lname)){
+				return true;
+			}
+		} catch (Exception e) {
+			LOG.error("Exception while processing the given student user.", e);
+		}
+		return false;
 	}
 
 }
