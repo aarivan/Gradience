@@ -46,13 +46,13 @@ public class LoginProcessor {
 			while (set.next()) {
 				Users temp = new Users();
 				String userId = set.getString("USERS_ID");
-				// System.out.println("1: " + userId);
+				System.out.println("1: " + userId);
 				temp.setUserId(userId);
 				String password = set.getString("PASSWORD");
-				// System.out.println("2: " + password);
+				System.out.println("2: " + password);
 				temp.setPassword(password);
 				String role = set.getString("ROLE");
-				// System.out.println("3: " + role);
+				System.out.println("3: " + role);
 				temp.setRole(role);
 				result.add(temp);
 			}

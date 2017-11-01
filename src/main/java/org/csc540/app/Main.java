@@ -4,8 +4,10 @@ import java.sql.Connection;
 import java.util.Scanner;
 import org.apache.log4j.Logger;
 import org.csc540.helper.RoleConstants;
+import org.csc540.pojo.Professor;
 import org.csc540.pojo.Users;
 import org.csc540.processor.LoginProcessor;
+import org.csc540.processor.ProfessorProcessor;
 import org.csc540.session.Session;
 
 public class Main {
@@ -45,6 +47,8 @@ public class Main {
 				// Control flow to respective Home Page based on Role
 				if (currUser.getRole().equalsIgnoreCase(RoleConstants.PROFFESOR)) {
 					// REDIRECT TO PROFESSOR HOME PAGE
+					Professor currentProf = ProfessorProcessor.getprof(currUser.getUserId());
+					ProfessorAccount.homePage(currentProf, scanner);
 				} else if (currUser.getRole().equalsIgnoreCase(RoleConstants.STUDENT)) {
 					StudentAccount.checkStudentRole(userId, scanner);
 				} else {

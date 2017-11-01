@@ -26,4 +26,11 @@ public class DBFieldConstants {
 	public static final String COURSE_STUD_ENROLLED_NUM = "STUD_ENROLLED_NUM";
 	public static final String COURSE_MAX_STUD_ALLOWED = "MAX_STUD_ALLOWED";
 	
+	//PROFESSOR TABLE
+	public static final String PROFESSOR_FIRST_NAME = "FIRST_NAME";
+	public static final String PROFESSOR_LAST_NAME = "LAST_NAME";
+	public static final String PROFESSOR_USERS_ID = "USERS_ID";
+	public static final String PROFESSOR_ADDRESS = "ADDRESS";
+	public static final String PROFESSOR_PHONE_NUMBER = "PH_NO";
+	public static final String PROFESSOR_EMAIL_ID = "EMAIL_ID";
 }
