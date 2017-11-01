@@ -36,7 +36,7 @@ public class StudentProcessor {
 		return null;
 	}
 
-	private static List<Student> convertResultSetToStudentPOJO(ResultSet set) {
+	public static List<Student> convertResultSetToStudentPOJO(ResultSet set) {
 		LOG.info("Converting ResultSet to Student POJO...");
 		List<Student> result = null;
 		try {
@@ -150,6 +150,30 @@ public class StudentProcessor {
         }
 		
 		
+	}
+
+	public static Boolean validatingStudentDetails(String student_id, String student_fname, String student_lname) {
+		// TODO Auto-generated method stub
+		LOG.info("Processor to validate student details: " + student_id);
+		try {
+			Connection conn = Session.getConnection();
+			String check_stu_query = "SELECT * FROM STUDENT WHERE USERS_ID = '" + student_id + "'";
+			PreparedStatement ps = conn.prepareStatement(check_stu_query);
+			ResultSet check_stu_result = ps.executeQuery();
+
+			Student studentUser = null;
+			List<Student> list = convertResultSetToStudentPOJO(check_stu_result);
+			if (list.size() == 1) {
+				studentUser = list.get(0);
+
+			}
+			if(studentUser.getUserId().equals(student_id)&&studentUser.getF_name().equals(student_fname)&&studentUser.getL_name().equals(student_lname)){
+				return true;
+			}
+		} catch (Exception e) {
+			LOG.error("Exception while processing the given student user.", e);
+		}
+		return false;
 	}
 
 }
