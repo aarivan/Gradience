@@ -68,6 +68,7 @@ public class StudentAccount {
 				editProfile(currStudent, scanner);
 				break;
 			case 3:
+				viewStudentCourses(currStudent,scanner);
 				break;
 			default:
 				break;
@@ -105,37 +106,70 @@ public class StudentAccount {
 			System.out.println("Enter the new Last Name:");
 			String new_L_name = scanner.next();
 			currStudent.setL_name(new_L_name);
+			try {
+				StudentProcessor.updateStudentProfile(currStudent);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 
 		} else if (editChoice == 3) {
 			System.out.println("Editting StudentID");
 			System.out.println("Enter the new Student ID:");
 			String new_StudentID = scanner.next();
 			currStudent.setUserId(new_StudentID);
+			try {
+				StudentProcessor.updateStudentProfile(currStudent);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 
 		} else if (editChoice == 4) {
 			System.out.println("Editting Address");
+			scanner.nextLine(); 
 			System.out.println("Enter the new Address:");
-			String new_Address = scanner.next();
+			String new_Address = scanner.nextLine();
+			System.out.println("Entered the new Address:"+new_Address);
 			currStudent.setAddress(new_Address);
+			try {
+				StudentProcessor.updateStudentProfile(currStudent);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 		} else if (editChoice == 5) {
 			System.out.println("Editting Phone Number");
 			System.out.println("Enter the new Phone Number:");
 			String new_phone_number = scanner.next();
 			currStudent.setPhone_number(new_phone_number);
+			try {
+				StudentProcessor.updateStudentProfile(currStudent);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 		} else if (editChoice == 6) {
 			System.out.println("Editting Email");
 			System.out.println("Enter the new Email:");
 			String new_email = scanner.next();
 			currStudent.setEmail(new_email);
-		} else if (editChoice == 0) {
 			try {
 				StudentProcessor.updateStudentProfile(currStudent);
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+		} else if (editChoice == 0) {
+			
 			studentHomePage(currStudent, scanner);
+		}else {
+			LOG.info("Invalid Option");
+			
 		}
 
+	}
+	
+	public static void viewStudentCourses(Student currStudent, Scanner scanner) {
+		System.out.println("\n\n");
+		System.out.println("----------------------------");
+		System.out.println("List of your Courses as Student:");
+		System.out.println("----------------------------");
+		StudentProcessor.getCoursesOfStudent(currStudent.getUserId() ,scanner);
 	}
 }

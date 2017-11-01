@@ -6,9 +6,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.Scanner;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import org.apache.log4j.Logger;
 import org.csc540.helper.DBFieldConstants;
+import org.csc540.pojo.HomeWork;
 import org.csc540.pojo.Student;
 import org.csc540.session.Session;
 
@@ -47,7 +50,6 @@ public class StudentProcessor {
 				String userId = set.getString(DBFieldConstants.STUDENT_USERS_ID);
 				temp.setUserId(userId);
 				String f_name = set.getString(DBFieldConstants.STUDENT_FIRST_NAME);
-				System.out.println(f_name + "f_name");
 				temp.setF_name(f_name);
 				String l_name = set.getString(DBFieldConstants.STUDENT_LAST_NAME);
 				temp.setL_name(l_name);
@@ -69,26 +71,7 @@ public class StudentProcessor {
 		return result;
 	}
 
-	public static void updateStudentProfile1(String user_id, String new_F_name) throws SQLException {
-		Connection conn = null;
-		PreparedStatement ps = null;
-		System.out.println("updateStudentProfile" + user_id + new_F_name);
-
-		String updateTableSQL = "UPDATE STUDENT SET first_name =? WHERE USERS_ID = ?";
-
-		try {
-			conn = Session.getConnection();
-			ps = conn.prepareStatement(updateTableSQL);
-			ps.setString(1, new_F_name);
-			ps.setString(2, user_id);
-			ps.execute();
-			System.out.println("first name set to " + new_F_name);
-
-			System.out.println("connection " + conn + "   ps" + ps);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+	
 
 	public static void updateStudentProfile(Student currStudent) throws SQLException {
 		Connection conn = null;
@@ -104,8 +87,10 @@ public class StudentProcessor {
 			conn = Session.getConnection();
 			ps = conn.prepareStatement(updateTableSQL);
 			ps.execute();
+			System.out.println("Student Account Updated!!");
 		} catch (Exception e) {
 			e.printStackTrace();
+			LOG.info("there was an exception while updating the Student details");
 		}
 
 	}
@@ -132,6 +117,106 @@ public class StudentProcessor {
 			LOG.error("Exception while processing the given student user.", e);
 		}
 		return false;
+	}
+	
+	public static List getCoursesOfStudent (String user_id,Scanner scanner) {
+		List courseIDForStudents =  new ArrayList();
+		try {
+			Connection conn = Session.getConnection();
+			String getCoursesForStudent = "select COURSE_ID from COURSE_ENROLLMENT where users_id='"+user_id+"'";
+			PreparedStatement ps = conn.prepareStatement(getCoursesForStudent);
+			ResultSet getCoursesForStudent_result = ps.executeQuery();
+			int i = 1;
+			while (getCoursesForStudent_result.next()) {
+				System.out.println(i++ +". " +getCoursesForStudent_result.getString(1));
+				courseIDForStudents.add(getCoursesForStudent_result.getString(1));
+			}
+			System.out.println("Please enter Course ID for which you would like to view:");
+			String courseId = scanner.next();
+			viewHWForCourse(courseId,scanner);
+			
+			
+		} catch (Exception e) {
+			LOG.error("Exception while processing courses for students.getCoursesOfStudent", e);
+		}
+		
+		return courseIDForStudents;
+	}
+	public static void viewHWForCourse(String courseId,Scanner scanner) {
+		System.out.println("######Display HW for course: "+courseId);
+		System.out.println("/n 1.Current Open HWs /n2. Past HWs");
+		System.out.println("Enter 1 for Current HWs and 2 For Past HWs:");
+		int HWChoice = scanner.nextInt();
+		Date today = new Date();  
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");
+         String todayFormated =formatter.format(today);
+        System.out.println("Today in dd-MMM-yyyy format : "+formatter.format(today));
+        if (HWChoice==1) {
+        	try {
+    			Connection conn = Session.getConnection();
+    			String getOpenHW = "select * from homework where course_id='"+courseId+"' and hw_end_date >'"+todayFormated+"'";
+    			PreparedStatement ps = conn.prepareStatement(getOpenHW);
+    			ResultSet getCoursesForStudent_result = ps.executeQuery();
+    			List<HomeWork> listHW = convertResultSetToHWPOJO(getCoursesForStudent_result);
+    			while(listHW.size() >0) {
+    			for(int i=0; i<listHW.size(); i++){
+    				System.out.println("Open ");
+    				listHW.get(i).getHw_id();
+    				}
+    			}
+    			
+    			
+    		} catch (Exception e) {
+    			LOG.error("Exception while processing  open HW. viewHWForCourse", e);
+    		}
+        	
+        }else if (HWChoice==2) {
+        	
+        }else if(HWChoice!=1 || HWChoice!=2) {
+        	System.out.println("##########Invalid Choice########");
+        	System.out.println("Enter 1 for Current HWs and 2 For Past HWs:");
+    		HWChoice = scanner.nextInt();
+        }
+		
+	}
+	
+	public static List<HomeWork> convertResultSetToHWPOJO(ResultSet set) {
+		LOG.info("Converting ResultSet to HW POJO...");
+		List<HomeWork> result = null;
+		try {
+			result = new ArrayList<HomeWork>();
+			while (set.next()) {
+				HomeWork temp = new HomeWork();
+
+				String hw_id = set.getString("hw_id");
+				temp.setHw_id(hw_id);
+				String course_id = set.getString("course_id");
+				temp.setCourse_id(course_id);
+				String topic_id = set.getString("topic_id");
+				temp.setTopic_id(topic_id);
+				String HW_name = set.getString("HW_name");
+				temp.setHW_name(HW_name);
+				int  max_no_of_tries = set.getInt("max_no_of_tries");
+				temp.setMax_no_of_tries(max_no_of_tries);
+				String hw_end_date = set.getString("hw_end_date");
+				temp.setHw_end_date(hw_end_date);
+				String hw_st_date = set.getString("hw_st_date");
+				temp.setHw_st_date(hw_st_date);
+				int  correct_pts = set.getInt("correct_pts");
+				temp.setCorrect_pts(correct_pts);
+				int  penalty_pts = set.getInt("penalty_pts");
+				temp.setPenalty_pts(penalty_pts);
+				String score_policy = set.getString("score_policy");
+				temp.setScore_policy(score_policy);
+				int  diff_level = set.getInt("diff_level");
+				temp.setPenalty_pts(diff_level);
+				
+				result.add(temp);
+			}
+		} catch (Exception e) {
+			LOG.error("Exception while converting the Result Set to Student POJO", e);
+		}
+		return result;
 	}
 
 }
