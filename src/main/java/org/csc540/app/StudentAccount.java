@@ -23,7 +23,7 @@ public class StudentAccount {
 					studentHomePage(currStudent, scanner);
 				}
 			} else {
-				throw new RuntimeException("No student user found fro the User ID");
+				throw new RuntimeException("No student user found for the User ID");
 			}
 		} catch (Exception e) {
 			LOG.error("Exception while logging-in as Student/TA to the system", e);
@@ -31,18 +31,28 @@ public class StudentAccount {
 	}
 
 	private static void selectHomePage(Student currStudent, Scanner scanner) {
-		System.out.println("::: Student Home Page :::");
-		System.out.println(
-				"Enter the options for following actions: \n1. Log-in As TA \n2. Log-in As Student \n3. Log Out");
+		int newselection = 1;
+		while(newselection!=3){
+			System.out.println("\n\n::: Student/TA Selection Page :::");
+			System.out.println(
+					"Enter the options for following actions: \n1. Log-in As TA \n2. Log-in As Student \n3. Log Out\n\n");
 
-		Integer choice = scanner.nextInt();
-		if (choice == 1) {
-			TeachingAssistantAccount.TeachingAssistantHomePage(currStudent, scanner);
-		} else if (choice == 2) {
-			studentHomePage(currStudent, scanner);
-		} else {
-			LOG.info("Invalid Option");
+			newselection = scanner.nextInt();
+			switch(newselection){
+			case 1:
+				TeachingAssistantAccount.TeachingAssistantHomePage(currStudent, scanner);
+				break;
+			case 2:
+				studentHomePage(currStudent, scanner);
+				break;
+			case 3:
+				newselection = 3;
+				break;
+			default:
+				System.out.println("\n\nInvalid Option. Please try again ..");
+			}
 		}
+		Main.main(null);
 	}
 
 	public static void studentHomePage(Student currStudent, Scanner scanner) {
@@ -69,11 +79,16 @@ public class StudentAccount {
 				break;
 			case 3:
 				viewStudentCourses(currStudent,scanner);
+				// Add code here for Current HWs and Past HWs for this course.
+				
 				break;
-			default:
+			case 4:
+				selection = 4;
 				break;
+			default: System.out.println("Invalid Option! Try again.. ");
 			}// end switch
 		}
+		Main.main(null);
 	}
 
 	public static void viewProfile(Student currStudent) {
