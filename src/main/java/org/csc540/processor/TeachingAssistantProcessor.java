@@ -22,7 +22,7 @@ public class TeachingAssistantProcessor {
 	public static final Logger LOG = Logger.getLogger(TeachingAssistantProcessor.class);
 
 	public static List<CourseEnrollment> getTACourses(String userId) {
-		LOG.info("Processor to get all teh Courses for the TA: " + userId);
+		LOG.info("Processor to get all the Courses for the TA: " + userId);
 		try {
 			Connection conn = Session.getConnection();
 			String ta_courses_query = "SELECT * FROM TA WHERE TA_UID = '" + userId + "'";
