@@ -17,127 +17,250 @@ public class ProfessorAccount {
 	public static final Logger LOG = Logger.getLogger(ProfessorAccount.class);
 
 	public static ProfessorAccount homePage(Professor professorUser, Scanner scanner) {
-
-		System.out.println(
-				"Enter the options for following actions: \n1. View Profile \n2. View Courses \n3. Add Courses \n4. Enroll \n5. Drop A Student \n6. Log Out \nEnter your option:");
-		Integer choice = scanner.nextInt();
-		switch (choice) {
-		case 1:
-			System.out.println("### Press 0 to Go Back ###\n\n");
-			System.out.println("1. First Name: \t\t" + professorUser.getF_name());
-			System.out.println("2. Last Name: \t\t" + professorUser.getL_name());
-			System.out.println("3. Professor ID: \t" + professorUser.getUserId());
-			System.out.println("4. Address: \t\t" + professorUser.getAddress());
-			System.out.println("5. Phone Number: \t" + professorUser.getPhone_number());
-			System.out.println("6. Email: \t\t" + professorUser.getEmail());
-			break;
-		case 2:
-			System.out.println("### Press 0 to Go Back ###\n\n");
-			List<Course> profCourseList = null;
-			profCourseList = ProfessorProcessor.getCourses(professorUser.getUserId());
-
-			System.out.println("\n\n");
-			System.out.println("----------------------------");
-			System.out.println("List of your Courses as Professor:");
-			System.out.println("----------------------------");
-
-			int i = 0;
-			while (i < profCourseList.size()) {
-				System.out.println((i + 1) + ". " + profCourseList.get(i).getCourseId());
-				i++;
-			}
-
-			System.out.println("Please enter Course ID for which you would like to enter:");
-			String courseId = scanner.next();
-
-			i = 0;
-			boolean course_found = false;
-			while (i < profCourseList.size()) {
-				if (profCourseList.get(i).getCourseId().equalsIgnoreCase(courseId)) {
-					viewCourseDetails(scanner, profCourseList.get(i));
-					course_found = true;
+		int selection = 1;
+		List<Course> profCourseList = null;
+		String courseId;
+		int i=0;
+		while (selection != 11) {
+			System.out.println("\n\n::: Instructor Home Page :::");
+			System.out.println(
+					"Enter the options for following actions: \n1. View Profile \n2. View Courses \n3. Add Courses \n4. Enroll a Student \n5. Drop a Student \n6. View Report \n7. Setup TA \n8.View/AddExercises \n9. Search/Add​ ​questions​ ​to​ ​Question​ ​Bank \n10. Add/Remove Questions from Exercises \n11. Log Out \nEnter your option:");
+			selection = scanner.nextInt();
+			int newChoice;
+			switch (selection) {
+			case 1:
+				System.out.println("\n\n");
+				System.out.println("1. First Name: \t\t" + professorUser.getF_name());
+				System.out.println("2. Last Name: \t\t" + professorUser.getL_name());
+				System.out.println("3. Professor ID: \t" + professorUser.getUserId());
+				System.out.println("4. Address: \t\t" + professorUser.getAddress());
+				System.out.println("5. Phone Number: \t" + professorUser.getPhone_number());
+				System.out.println("6. Email: \t\t" + professorUser.getEmail());
+				System.out.println("\n\n");
+				System.out.println("### Press 0 to Go Back ###\n\n");
+				newChoice = scanner.nextInt();
+				while (newChoice != 0) {
+					System.out.println("Invalid choice!! Please enter 0 to go back to previous page!!");
+					newChoice = scanner.nextInt();
 				}
-				i++;
-			}
-			if (!course_found) {
-				System.out.println("Invalid Course Id Entered..");
-			}
-			break;
-		case 3:
-			// ADD COURSE
-			break;
-		case 4:
-			System.out.println("\nENROLL STUDENT:");
-			System.out.println("### Press 0 to Go Back ###\n\n");
-			List<Course> profCourseList1 = null;
-			profCourseList1 = ProfessorProcessor.getCourses(professorUser.getUserId());
+				break;
+			case 2:
+				// VIEW COURSES
+				profCourseList = ProfessorProcessor.getCourses(professorUser.getUserId());
+				System.out.println("\n\n");
+				System.out.println("----------------------------");
+				System.out.println("List of your Courses as Instructor:");
+				System.out.println("----------------------------");
 
-			System.out.println("\n\n");
-			System.out.println("----------------------------");
-			System.out.println("List of your Courses as Professor:");
-			System.out.println("----------------------------");
-
-			int i1 = 0;
-			while (i1 < profCourseList1.size()) {
-				System.out.println((i1 + 1) + ". " + profCourseList1.get(i1).getCourseId());
-				i1++;
-			}
-
-			System.out.println("Please enter Course ID for which you would like to enroll a student:");
-			String courseId1 = scanner.next();
-
-			i1 = 0;
-			boolean course_found1 = false;
-			while (i1 < profCourseList1.size()) {
-				if (profCourseList1.get(i1).getCourseId().equalsIgnoreCase(courseId1)) {
-					enrollStudenttoCourse(scanner, profCourseList1.get(i1));
-					course_found1 = true;
+				i = 0;
+				while (i < profCourseList.size()) {
+					System.out.println((i + 1) + ". " + profCourseList.get(i).getCourseId());
+					i++;
 				}
-				i1++;
-			}
-			if (!course_found1) {
-				System.out.println("Invalid Course Id Entered..");
-			}
-			break;
-		case 5:
-			System.out.println("\nDROP STUDENT:");
-			System.out.println("### Press 0 to Go Back ###\n\n");
-			List<Course> profCourseList11 = null;
-			profCourseList11 = ProfessorProcessor.getCourses(professorUser.getUserId());
 
-			System.out.println("\n\n");
-			System.out.println("----------------------------");
-			System.out.println("List of your Courses as Professor:");
-			System.out.println("----------------------------");
-
-			int i11 = 0;
-			while (i11 < profCourseList11.size()) {
-				System.out.println((i11 + 1) + ". " + profCourseList11.get(i11).getCourseId());
-				i11++;
-			}
-
-			System.out.println("Please enter Course ID for which you would like to enroll a student:");
-			String courseId11 = scanner.next();
-
-			i11 = 0;
-			boolean course_found11 = false;
-			while (i11 < profCourseList11.size()) {
-				if (profCourseList11.get(i11).getCourseId().equalsIgnoreCase(courseId11)) {
-					dropStudentfromCourse(scanner, profCourseList11.get(i11));
-					course_found11 = true;
+				System.out.println("Please enter Course ID for which you would like to enter:\n\n");
+				System.out.println("### Press 0 to Go Back ###\n\n");
+				courseId = scanner.next();
+				if(courseId == "0") {
+					break;
 				}
-				i11++;
+				else {
+					i = 0;
+					boolean course_found = false;
+					while (i < profCourseList.size()) {
+						if (profCourseList.get(i).getCourseId().equalsIgnoreCase(courseId)) {
+							viewCourseDetails(scanner, profCourseList.get(i));
+							course_found = true;
+						}
+						i++;
+					}
+					if (!course_found) {
+						System.out.println("Invalid Course Id Entered..");
+						break;
+					}
+					else {
+						System.out.println("\n\n### Press 0 to Go Back ###\n\n");
+						newChoice = scanner.nextInt();
+						while (newChoice != 0) {
+							System.out.println("\nInvalid choice!! Please enter 0 to go back to previous page!!\n\n");
+							newChoice = scanner.nextInt();
+						}
+						break;
+					}
+				}
+			case 3:
+				// ADD COURSE
+				System.out.println("\nADD COURSE:");
+				System.out.println("### Press 0 to Go Back ###\n\n");
+
+				System.out.println("\n\n");
+				System.out.println("----------------------------");
+				System.out.println("Please enter the details of the new course to be added:");
+				System.out.println("----------------------------");
+
+				Boolean flag;
+				System.out.println("\n\n");
+				System.out.println("Enter Course ID: ");
+				String course_id = scanner.next();
+				System.out.println("Enter Course Name: ");
+				scanner.nextLine();
+				String courseName = scanner.nextLine();
+				System.out.println("Enter Start Date: ");
+				String courseStartDate = scanner.next();
+				System.out.println("Enter End Date: ");
+				String courseEndDate = scanner.next();
+				System.out.println("Enter Course Level: ");
+				String courseLevel = scanner.next();
+				System.out.println("Enter Class Size: ");
+				String courseSize = scanner.next();
+
+				flag = validatingCourseDetails(course_id, courseName, courseStartDate, courseEndDate);
+
+				if (flag) {
+					ProfessorProcessor.addCourse(course_id, courseName, courseStartDate, courseEndDate,
+							professorUser.getUserId(), courseLevel, 0, courseSize);
+				} else {
+					System.out.println("Invalid Course details provided! Please try again.. ");
+				}
+
+				break;
+			case 4:
+				// ENROLL STUDENT TO COURSE
+				profCourseList = ProfessorProcessor.getCourses(professorUser.getUserId());
+				System.out.println("\n\n");
+				System.out.println("----------------------------");
+				System.out.println("List of your Courses as Instructor:");
+				System.out.println("----------------------------");
+
+				i = 0;
+				while (i < profCourseList.size()) {
+					System.out.println((i + 1) + ". " + profCourseList.get(i).getCourseId());
+					i++;
+				}
+
+				System.out.println("Please enter Course ID for which you would like to enter:\n\n");
+				System.out.println("### Press 0 to Go Back ###\n\n");
+				courseId = scanner.next();
+				if(courseId == "0") {
+					break;
+				}
+				else {
+					i = 0;
+					boolean course_found = false;
+					while (i < profCourseList.size()) {
+						if (profCourseList.get(i).getCourseId().equalsIgnoreCase(courseId)) {
+							enrollStudenttoCourse(scanner, profCourseList.get(i));
+							course_found = true;
+						}
+						i++;
+					}
+					if (!course_found) {
+						System.out.println("Invalid Course Id Entered..");
+						break;
+					}
+					else {
+						System.out.println("\n\n### Press 0 to Go Back ###\n\n");
+						newChoice = scanner.nextInt();
+						while (newChoice != 0) {
+							System.out.println("\nInvalid choice!! Please enter 0 to go back to previous page!!\n\n");
+							newChoice = scanner.nextInt();
+						}
+						break;
+					}
+				}
+			case 5:
+				// DROP A STUDENT FROM A COURSE
+				profCourseList = ProfessorProcessor.getCourses(professorUser.getUserId());
+				System.out.println("\n\n");
+				System.out.println("----------------------------");
+				System.out.println("List of your Courses as Instructor:");
+				System.out.println("----------------------------");
+
+				i = 0;
+				while (i < profCourseList.size()) {
+					System.out.println((i + 1) + ". " + profCourseList.get(i).getCourseId());
+					i++;
+				}
+
+				System.out.println("Please enter Course ID for which you would like to enter:\n\n");
+				System.out.println("### Press 0 to Go Back ###\n\n");
+				courseId = scanner.next();
+				if(courseId == "0") {
+					break;
+				}
+				else {
+					i = 0;
+					boolean course_found = false;
+					while (i < profCourseList.size()) {
+						if (profCourseList.get(i).getCourseId().equalsIgnoreCase(courseId)) {
+							dropStudentfromCourse(scanner, profCourseList.get(i));
+							course_found = true;
+						}
+						i++;
+					}
+					if (!course_found) {
+						System.out.println("Invalid Course Id Entered..");
+						break;
+					}
+					else {
+						System.out.println("\n\n### Press 0 to Go Back ###\n\n");
+						newChoice = scanner.nextInt();
+						while (newChoice != 0) {
+							System.out.println("\nInvalid choice!! Please enter 0 to go back to previous page!!\n\n");
+							newChoice = scanner.nextInt();
+						}
+						break;
+					}
+				}
+			case 6:
+				// VIEW REPORT
+				
+				break;
+			case 7:
+				// SETUP TA
+				
+				break;
+			case 8:
+				// View/AddExercises
+				
+				break;
+			case 9:
+				// Search/Add​ ​questions​ ​to​ ​Question​ ​Bank
+				
+				break;
+			case 10:
+				// Add/Remove Questions from Exercises
+				
+				break;
+			case 11:
+				// Logout
+				selection = 11;
+				break;
+			default:
+				System.out.println("Invalid Option! Please try again ..");
 			}
-			if (!course_found11) {
-				System.out.println("Invalid Course Id Entered..");
-			}
-			break;
-		default:
-			System.out.println("DEFAULT");
 		}
+		Main.main(null);
 		return null;
 	}
+	
+	public static Boolean validatingCourseDetails(String course_id, String courseName, String courseStartDate,
+			String courseEndDate) {
 
+		LOG.info("Function to validate the entered course details..");
+
+		Boolean flag_course = false;
+		Boolean flag_date = false;
+
+		flag_course = ProfessorProcessor.checkCourseDetails(course_id, courseName);
+
+		// CHECK THE COURSE_ID , COURSE_NAME TO BE UNIQUE
+		// CHECK THAT THE START AND END DATES ARE VALID
+
+		return true;
+	}
+
+	
 	public static void dropStudentfromCourse(Scanner scanner, Course course) {
 		// TODO Auto-generated method stub
 		Boolean flag;

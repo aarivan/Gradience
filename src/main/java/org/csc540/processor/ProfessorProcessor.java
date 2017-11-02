@@ -119,8 +119,9 @@ public class ProfessorProcessor {
 			System.out.println("QUERY SUCCESSFUL!");
 
 		} catch (Exception e) {
-			LOG.error("Exception...", e);
+			System.out.println(e);
 		}
+
 	}
 	public static void dropStudent(String student_id, String courseId) {
 		// TODO Auto-generated method stub
@@ -133,9 +134,50 @@ public class ProfessorProcessor {
 			System.out.println("QUERY SUCCESSFUL!");
 
 		} catch (Exception e) {
-			LOG.error("Exception..", e);
+			System.out.println(e);
 		}
 	}
+	
+	public static Boolean checkCourseDetails(String course_id, String courseName) {
+		LOG.info("Processor to check course details entered by the Professor!");
+		try {
+			Connection conn = Session.getConnection();
+			String course_query = "SELECT * FROM COURSE WHERE COURSE_ID = '" + course_id + "' OR COURSE_NAME = '"
+					+ courseName + "'";
+			PreparedStatement ps = conn.prepareStatement(course_query);
+			ResultSet course_result = ps.executeQuery();
 
+			List<Course> list = convertResultSetToCoursePOJO(course_result);
+
+			if (!(list.size() == 0)) {
+				return false;
+			} else {
+				return true;
+			}
+		} catch (Exception e) {
+			LOG.error("Exception..", e);
+		}
+		return false;
+	}
+	
+	public static void addCourse(String course_id, String courseName, String courseStartDate, String courseEndDate,
+			String profId, String courseLevel, int studentsEnrolled, String courseSize) {
+		LOG.info("Processor to insert a new course by a professor!");
+		try {
+			Connection conn = Session.getConnection();
+			String prof_addcourse_query = "INSERT INTO COURSE (COURSE_ID, COURSE_NAME, COURSE_ST_DATE, COURSE_END_DATE, PROF_UID, LEVEL_C, STUD_ENROLLED_NUM, MAX_STUD_ALLOWED) VALUES ('"
+					+ course_id + "','" + courseName + "','" + courseStartDate + "','" + courseEndDate + "','" + profId
+					+ "','" + courseLevel + "'," + studentsEnrolled + "," + courseSize + ")";
+			PreparedStatement ps = conn.prepareStatement(prof_addcourse_query);
+			System.out.println(prof_addcourse_query);
+			ps.execute();
+			System.out.println(prof_addcourse_query);
+			System.out.println("QUERY SUCCESSFUL!");
+
+		} catch (Exception e) {
+			LOG.error("Exception...", e);
+		}
+
+	}
 	
 }
