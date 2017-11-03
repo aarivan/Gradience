@@ -10,8 +10,8 @@ public class HomeWork {
 	String topic_id;
 	String HW_name;
 	int max_no_of_tries;
-	String hw_st_date;
-	String hw_end_date;
+	Date hw_st_date;
+	Date hw_end_date;
 	int correct_pts;
 	int penalty_pts;
 	String score_policy;
@@ -72,18 +72,19 @@ public class HomeWork {
 	public void setDiff_level(int diff_level) {
 		this.diff_level = diff_level;
 	}
-	public String getHw_st_date() {
+	public Date getHw_st_date() {
 		return hw_st_date;
 	}
-	public void setHw_st_date(String hw_st_date) {
+	public void setHw_st_date(Date hw_st_date) {
 		this.hw_st_date = hw_st_date;
 	}
-	public String getHw_end_date() {
+	public Date getHw_end_date() {
 		return hw_end_date;
 	}
-	public void setHw_end_date(String hw_end_date) {
+	public void setHw_end_date(Date hw_end_date) {
 		this.hw_end_date = hw_end_date;
 	}
+	
 
 
 }

@@ -89,7 +89,7 @@ public class StudentProcessor {
 			ps.execute();
 			System.out.println("Student Account Updated!!");
 		} catch (Exception e) {
-			e.printStackTrace();
+			
 			LOG.info("there was an exception while updating the Student details");
 		}
 
@@ -198,9 +198,9 @@ public class StudentProcessor {
 				temp.setHW_name(HW_name);
 				int  max_no_of_tries = set.getInt("max_no_of_tries");
 				temp.setMax_no_of_tries(max_no_of_tries);
-				String hw_end_date = set.getString("hw_end_date");
+				Date hw_end_date = set.getDate("hw_end_date");
 				temp.setHw_end_date(hw_end_date);
-				String hw_st_date = set.getString("hw_st_date");
+				Date hw_st_date = set.getDate("hw_st_date");
 				temp.setHw_st_date(hw_st_date);
 				int  correct_pts = set.getInt("correct_pts");
 				temp.setCorrect_pts(correct_pts);
@@ -209,7 +209,7 @@ public class StudentProcessor {
 				String score_policy = set.getString("score_policy");
 				temp.setScore_policy(score_policy);
 				int  diff_level = set.getInt("diff_level");
-				temp.setPenalty_pts(diff_level);
+				temp.setDiff_level(diff_level);
 				
 				result.add(temp);
 			}
