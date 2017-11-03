@@ -3,13 +3,18 @@ package org.csc540.processor;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.csc540.helper.DBFieldConstants;
 import org.csc540.pojo.Course;
 import org.csc540.pojo.CourseEnrollment;
+import org.csc540.pojo.HomeWork;
 import org.csc540.pojo.Professor;
 import org.csc540.pojo.Users;
 import org.csc540.session.Session;
@@ -178,6 +183,127 @@ public class ProfessorProcessor {
 			LOG.error("Exception...", e);
 		}
 
+	}
+	
+	public static List<HomeWork> getHWExcerciseForCourse(Course course) {
+		try {
+			Connection conn = Session.getConnection();
+			String getHW = "select * from homework where course_id='"+course.getCourseId()+"'";
+			PreparedStatement ps = conn.prepareStatement(getHW);
+			ResultSet getHW_result = ps.executeQuery();
+			List<HomeWork> listHW = StudentProcessor.convertResultSetToHWPOJO(getHW_result);
+			//System.out.println("getHWExcerciseForCourse " +listHW.get(1).getHw_id());
+			return listHW;
+			
+		} catch (Exception e) {
+			LOG.error("Exception while processing  open HW. viewHWForCourse", e);
+		}
+		return null;
+	}
+	
+	public static List<HomeWork> getHWExcerciseDetails(String HWId) {
+		try {
+			Connection conn = Session.getConnection();
+			String getHW = "select * from homework where hw_id='"+HWId+"'";
+			PreparedStatement ps = conn.prepareStatement(getHW);
+			ResultSet getHW_result = ps.executeQuery();
+			List<HomeWork> listHW = StudentProcessor.convertResultSetToHWPOJO(getHW_result);
+			return listHW;
+			
+		} catch (Exception e) {
+			LOG.error("Exception while processing  open HW. viewHWForCourse", e);
+		}
+		return null;
+	}
+	
+	public static void updateHomeWork(HomeWork homeWork) throws SQLException {
+		Connection conn = null;
+		PreparedStatement ps = null;
+		 
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");
+      
+         String startFormated =formatter.format(homeWork.getHw_st_date());
+         String endFormated =formatter.format(homeWork.getHw_end_date());
+
+		String updateTableSQL = "UPDATE HOMEWORK " + "SET course_id= '"
+				+ homeWork.getCourse_id() + "' ,topic_id ='" + homeWork.getTopic_id() + "'" + " , HW_name='"
+				+ homeWork.getHW_name() + "',max_no_of_tries=" + homeWork.getMax_no_of_tries() + "" + ",hw_st_date='"
+				+ startFormated + "',hw_end_date ='" + endFormated + "'" + 
+				",correct_pts="+homeWork.getCorrect_pts()+""+",penalty_pts="+homeWork.getPenalty_pts()+""+
+				",score_policy='"+homeWork.getScore_policy()+"'"+",diff_level="+homeWork.getDiff_level()+""
+				+ " WHERE hw_id = '"
+				+ homeWork.getHw_id() + "'";
+
+		try {
+			System.out.println(updateTableSQL);
+			conn = Session.getConnection();
+			ps = conn.prepareStatement(updateTableSQL);
+			ps.execute();
+			System.out.println("HW Updated!!");
+		} catch (SQLException e) {
+			
+			System.out.println("there was an exception while updating HW "+e.getMessage());
+		}catch (Exception e) {
+			
+			System.out.println("there was an exception while updating  HW "+e.getMessage());
+		}
+		
+	}
+	public static void addHomeWork(String hw_id,String course_Id,String topicId,String hwName, int maxTries, String hwStartDate,String hwEndDate,int correct_pt,
+			int penalty_pt,String scoring_policy,int diffLevel) throws SQLException, ParseException {
+		Connection conn = null;
+		PreparedStatement ps = null;
+		 
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");
+       // Date new_start =formatter.parse(hwStartDate);
+		//Date new_end =formatter.parse(hwEndDate);
+		System.out.println("new_end no "+hwEndDate+ "new_end ");
+      
+
+		String insertTableSQL = "INSERT INTO HOMEWORK (hw_id, course_id, topic_id, HW_name, max_no_of_tries, hw_st_date, hw_end_date, "
+				+ "correct_pts, penalty_pts, score_policy, diff_level) VALUES "
+				+ "('"+hw_id+"', '"+course_Id+"', '"+topicId+"','"+hwName+"', "+maxTries
+						+ ",'"+hwStartDate+"','"+hwEndDate+"', "+correct_pt+", "+penalty_pt+", "
+								+ "'"+scoring_policy+"', "+diffLevel+")";
+
+		try {
+			System.out.println(insertTableSQL);
+			conn = Session.getConnection();
+			ps = conn.prepareStatement(insertTableSQL);
+			ps.execute();
+			System.out.println("HW Added!!");
+		} catch (SQLException e) {
+			
+			System.out.println("there was an exception while Adding HW "+e.getMessage());
+		}catch (Exception e) {
+			
+			System.out.println("there was an exception while Adding HW "+e.getMessage());
+		}
+		
+	}
+	public static void updateprofessorProfile(Professor professorUser) throws SQLException{
+		Connection conn = null;
+		PreparedStatement ps = null;
+
+		String updateTableSQL = "UPDATE PROFESSOR " + "SET first_name = '" + professorUser.getF_name() + "', last_name= '"
+				+ professorUser.getL_name() + "' ,address ='" + professorUser.getAddress() + "'" + " , ph_no='"
+				+ professorUser.getPhone_number() + "',email_id='"
+				+ professorUser.getEmail() +  "' WHERE users_id = '"
+				+ professorUser.getUserId() + "'";
+
+		try {
+			conn = Session.getConnection();
+			ps = conn.prepareStatement(updateTableSQL);
+			ps.execute();
+			System.out.println("Professor Account Updated!!");
+		} catch (SQLException e) {
+			
+			System.out.println("tthere was an exception while updating the Professor details "+e.getMessage());
+		}catch (Exception e) {
+			
+			LOG.info("there was an exception while updating the Professor details"+e.getMessage());
+		}
+		
 	}
 	
 }
