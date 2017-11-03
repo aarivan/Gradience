@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 import org.csc540.pojo.Course;
 import org.csc540.pojo.CourseEnrollment;
 import org.csc540.pojo.Professor;
+import org.csc540.pojo.Topic;
 import org.csc540.processor.ProfessorProcessor;
 import org.csc540.processor.StudentProcessor;
 import org.csc540.processor.TeachingAssistantProcessor;
@@ -20,7 +21,7 @@ public class ProfessorAccount {
 		int selection = 1;
 		List<Course> profCourseList = null;
 		String courseId;
-		int i=0;
+		int i = 0;
 		while (selection != 11) {
 			System.out.println("\n\n::: Instructor Home Page :::");
 			System.out.println(
@@ -61,10 +62,9 @@ public class ProfessorAccount {
 				System.out.println("Please enter Course ID for which you would like to enter:\n\n");
 				System.out.println("### Press 0 to Go Back ###\n\n");
 				courseId = scanner.next();
-				if(courseId == "0") {
+				if (courseId == "0") {
 					break;
-				}
-				else {
+				} else {
 					i = 0;
 					boolean course_found = false;
 					while (i < profCourseList.size()) {
@@ -77,8 +77,7 @@ public class ProfessorAccount {
 					if (!course_found) {
 						System.out.println("Invalid Course Id Entered..");
 						break;
-					}
-					else {
+					} else {
 						System.out.println("\n\n### Press 0 to Go Back ###\n\n");
 						newChoice = scanner.nextInt();
 						while (newChoice != 0) {
@@ -141,10 +140,9 @@ public class ProfessorAccount {
 				System.out.println("Please enter Course ID for which you would like to enter:\n\n");
 				System.out.println("### Press 0 to Go Back ###\n\n");
 				courseId = scanner.next();
-				if(courseId == "0") {
+				if (courseId == "0") {
 					break;
-				}
-				else {
+				} else {
 					i = 0;
 					boolean course_found = false;
 					while (i < profCourseList.size()) {
@@ -157,8 +155,7 @@ public class ProfessorAccount {
 					if (!course_found) {
 						System.out.println("Invalid Course Id Entered..");
 						break;
-					}
-					else {
+					} else {
 						System.out.println("\n\n### Press 0 to Go Back ###\n\n");
 						newChoice = scanner.nextInt();
 						while (newChoice != 0) {
@@ -185,10 +182,9 @@ public class ProfessorAccount {
 				System.out.println("Please enter Course ID for which you would like to enter:\n\n");
 				System.out.println("### Press 0 to Go Back ###\n\n");
 				courseId = scanner.next();
-				if(courseId == "0") {
+				if (courseId == "0") {
 					break;
-				}
-				else {
+				} else {
 					i = 0;
 					boolean course_found = false;
 					while (i < profCourseList.size()) {
@@ -201,8 +197,7 @@ public class ProfessorAccount {
 					if (!course_found) {
 						System.out.println("Invalid Course Id Entered..");
 						break;
-					}
-					else {
+					} else {
 						System.out.println("\n\n### Press 0 to Go Back ###\n\n");
 						newChoice = scanner.nextInt();
 						while (newChoice != 0) {
@@ -214,23 +209,102 @@ public class ProfessorAccount {
 				}
 			case 6:
 				// VIEW REPORT
-				
+
 				break;
 			case 7:
 				// SETUP TA
-				
+
 				break;
 			case 8:
 				// View/AddExercises
-				
+
 				break;
 			case 9:
 				// Search/Add​ ​questions​ ​to​ ​Question​ ​Bank
+				System.out.println("\n::: ADD QUESTION TO QUESTION BANK :::");
+				System.out.println("### Press 0 to Go Back ###\n\n");
+
+				profCourseList = ProfessorProcessor.getCourses(professorUser.getUserId());
+				System.out.println("\n\n");
+				System.out.println("----------------------------");
+				System.out.println("List of your Courses as Instructor:");
+				System.out.println("----------------------------");
+
+				i = 0;
+				while (i < profCourseList.size()) {
+					System.out.println((i + 1) + ". " + profCourseList.get(i).getCourseId());
+					i++;
+				}
+
+				System.out.println("Please enter Course ID for which you would like to enter:\n\n");
+				System.out.println("### Press 0 to Go Back ###\n\n");
+				courseId = scanner.next();
+
+				System.out.println("----------------------------");
+				System.out.println("List of Topic IDs:");
+				System.out.println("----------------------------");
+
+				List<Topic> profCourseTopicList = null;
+				profCourseTopicList = ProfessorProcessor.getCourseTopics(courseId);
+
+				i = 0;
+				while (i < profCourseTopicList.size()) {
+					System.out.println((i + 1) + ". " + profCourseTopicList.get(i).getTopicId() + "-----"
+							+ profCourseTopicList.get(i).getTopicName());
+					i++;
+				}
+
+				System.out.println("Please enter the Topic ID to which you would like to add:");
+				System.out.println("### Press 0 to Go Back ###\n\n");
+				String topicId = scanner.next();
+
+				System.out.println("Please enter the Question ID:");
+				String quesId = scanner.next();
+
+				System.out.println("Please enter the Question type(P/NP) [P - Parameterized, NP - Non Parameterized]:");
+				String quesType = scanner.next();
+
+				System.out.println("Please enter the Question text:");
+				scanner.nextLine();
+				String quesText = scanner.nextLine();
+
+				System.out.println("Please enter the Question explanation:");
+
+				String quesExp = scanner.nextLine();
+				scanner.nextLine();
+
+				System.out.println("Please enter the difficulty level (1-5):");
+				int diffLevel = scanner.nextInt();
+
+				System.out.println("Please enter the Hint:");
+				scanner.nextLine();
+				String hint = scanner.nextLine();
+
+
+				ProfessorProcessor.addQuesToBank(quesId, topicId, quesText, quesExp, diffLevel, hint, quesType);
+				int ans_id = 1;
 				
+				String ch = "Y";
+				do {
+					System.out.println("Please enter the answer choice for the question:");
+					String ans = scanner.nextLine();
+					scanner.nextLine();
+					
+					System.out.println("Is this the correct answer? (T/F)");
+					String is_correct = scanner.next();
+					
+					ProfessorProcessor.addAnswer(Integer.toString(ans_id), quesId, is_correct, ans);
+					
+					ans_id ++;
+					System.out.println("Do you want to add another answer? (Y/N)");
+					ch = scanner.next();
+					
+				} while (ch.equals("Y"));
+
 				break;
 			case 10:
 				// Add/Remove Questions from Exercises
-				
+
 				break;
 			case 11:
 				// Logout
@@ -243,7 +317,7 @@ public class ProfessorAccount {
 		Main.main(null);
 		return null;
 	}
-	
+
 	public static Boolean validatingCourseDetails(String course_id, String courseName, String courseStartDate,
 			String courseEndDate) {
 
@@ -260,7 +334,6 @@ public class ProfessorAccount {
 		return true;
 	}
 
-	
 	public static void dropStudentfromCourse(Scanner scanner, Course course) {
 		// TODO Auto-generated method stub
 		Boolean flag;
@@ -271,18 +344,17 @@ public class ProfessorAccount {
 		String student_fname = scanner.next();
 		System.out.println("Enter Student Last-Name: ");
 		String student_lname = scanner.next();
-		
+
 		flag = StudentProcessor.validatingStudentDetails(student_id, student_fname, student_lname);
-		
-		if(flag){
+
+		if (flag) {
 			// Allow Insertion - enroll a student
-			ProfessorProcessor.dropStudent(student_id,course.getCourseId());
-		}
-		else {
+			ProfessorProcessor.dropStudent(student_id, course.getCourseId());
+		} else {
 			// Disallow enrollment
 			System.out.println("Invalid Student details provided! Please try again.. ");
 		}
-		
+
 	}
 
 	public static void enrollStudenttoCourse(Scanner scanner, Course course) {
@@ -295,18 +367,17 @@ public class ProfessorAccount {
 		String student_fname = scanner.next();
 		System.out.println("Enter Student Last-Name: ");
 		String student_lname = scanner.next();
-		
+
 		flag = StudentProcessor.validatingStudentDetails(student_id, student_fname, student_lname);
-		
-		if(flag){
+
+		if (flag) {
 			// Allow Insertion - enroll a student
-			ProfessorProcessor.enrollStudent(student_id,course.getCourseId());
-		}
-		else {
+			ProfessorProcessor.enrollStudent(student_id, course.getCourseId());
+		} else {
 			// Disallow enrollment - try again - enter valid student details
 			System.out.println("Invalid Student details provided! Please try again.. ");
 		}
-		
+
 	}
 
 	public static void viewCourseDetails(Scanner scanner, Course courseDetails) {
