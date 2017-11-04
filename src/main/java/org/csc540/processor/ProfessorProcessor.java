@@ -447,5 +447,21 @@ public class ProfessorProcessor {
 		}
 		
 	}
+	public static void addTA(String ta_id, String courseId) {
+		LOG.info("Processor to TA!");
+		try {
+			Connection conn = Session.getConnection();
+			String add_TA_query = "INSERT INTO TA (ta_uid, course_id) VALUES ('" + ta_id + "','"  + courseId + "')";
+			System.out.println(add_TA_query);
+			PreparedStatement ps = conn.prepareStatement(add_TA_query);
+			ps.execute();
+			System.out.println("QUERY SUCCESSFUL!");
+
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+		
+		
+	}
 	
 }
