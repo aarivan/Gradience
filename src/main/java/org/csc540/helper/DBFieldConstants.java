@@ -41,4 +41,9 @@ public class DBFieldConstants {
 	// TOPIC
 	public static final String TOPIC_TOPIC_ID = "TOPIC_ID";
 	public static final String TOPIC_TOPIC_NAME = "TOPIC_NAME";
+	
+	// HW_QUESTIONS
+	public static final String HWID = "HW_ID";
+	public static final String QUESTIONID = "QUES_ID";
+
 }
