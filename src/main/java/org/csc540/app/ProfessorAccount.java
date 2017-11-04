@@ -413,9 +413,11 @@ public class ProfessorAccount {
 				String topicId = scanner.next();
 				System.out.println("Enter Course ID : ");
 				String course_Id = scanner.next();
+				System.out.println("Enter HW Type : ");
+				String hw_type = scanner.next();
 				try {
 					ProfessorProcessor.addHomeWork(hw_id,course_Id,topicId,hwName, maxTries, hwStartDate,
-							hwEndDate,correct_pt,penalty_pt,scoring_policy,diffLevel);
+							hwEndDate,correct_pt,penalty_pt,scoring_policy,diffLevel,hw_type);
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -812,6 +814,7 @@ public class ProfessorAccount {
 		System.out.println("(8) HW Topic ID:" + homeWork.getTopic_id());
 		System.out.println("(9) HW Correct points:" + homeWork.getCorrect_pts());
 		System.out.println("(10) HW Penalty points:" + homeWork.getPenalty_pts());
+		System.out.println("(11) HW Type:" + homeWork.getHw_type());
 		System.out.println("### Press 0 to Go Back ###\n\n");
 		System.out.println("### Press the field name to edit ###\n\n");
 		int editHWChoice = scanner.nextInt();

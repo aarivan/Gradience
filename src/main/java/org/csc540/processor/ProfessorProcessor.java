@@ -356,7 +356,8 @@ public class ProfessorProcessor {
 				+ homeWork.getHW_name() + "',max_no_of_tries=" + homeWork.getMax_no_of_tries() + "" + ",hw_st_date='"
 				+ startFormated + "',hw_end_date ='" + endFormated + "'" + 
 				",correct_pts="+homeWork.getCorrect_pts()+""+",penalty_pts="+homeWork.getPenalty_pts()+""+
-				",score_policy='"+homeWork.getScore_policy()+"'"+",diff_level="+homeWork.getDiff_level()+""
+				",score_policy='"+homeWork.getScore_policy()+"'"+",diff_level="+homeWork.getDiff_level()+""+
+				",hw_type='"+homeWork.getHw_type()+"'"
 				+ " WHERE hw_id = '"
 				+ homeWork.getHw_id() + "'";
 
@@ -376,7 +377,7 @@ public class ProfessorProcessor {
 		
 	}
 	public static void addHomeWork(String hw_id,String course_Id,String topicId,String hwName, int maxTries, String hwStartDate,String hwEndDate,int correct_pt,
-			int penalty_pt,String scoring_policy,int diffLevel) throws SQLException, ParseException {
+			int penalty_pt,String scoring_policy,int diffLevel, String hw_type) throws SQLException, ParseException {
 		Connection conn = null;
 		PreparedStatement ps = null;
 		 
@@ -387,13 +388,12 @@ public class ProfessorProcessor {
       
 
 		String insertTableSQL = "INSERT INTO HOMEWORK (hw_id, course_id, topic_id, HW_name, max_no_of_tries, hw_st_date, hw_end_date, "
-				+ "correct_pts, penalty_pts, score_policy, diff_level) VALUES "
+				+ "correct_pts, penalty_pts, score_policy, diff_level,hw_type) VALUES "
 				+ "('"+hw_id+"', '"+course_Id+"', '"+topicId+"','"+hwName+"', "+maxTries
 						+ ",'"+hwStartDate+"','"+hwEndDate+"', "+correct_pt+", "+penalty_pt+", "
-								+ "'"+scoring_policy+"', "+diffLevel+")";
+								+ "'"+scoring_policy+"', "+diffLevel+",'"+hw_type+"')";
 
 		try {
-			System.out.println(insertTableSQL);
 			conn = Session.getConnection();
 			ps = conn.prepareStatement(insertTableSQL);
 			ps.execute();
