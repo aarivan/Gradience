@@ -253,10 +253,12 @@ public class TeachingAssistantAccount {
 				String topicId = scanner.next();
 				System.out.println("Enter Course ID : ");
 				String course_Id = scanner.next();
-				course_Id =course_Id.toUpperCase();
+				System.out.println("Enter HW Type : ");
+				String hw_type = scanner.next();
+				
 				try {
 					ProfessorProcessor.addHomeWork(hw_id,course_Id,topicId,hwName, maxTries, hwStartDate,
-							hwEndDate,correct_pt,penalty_pt,scoring_policy,diffLevel);
+							hwEndDate,correct_pt,penalty_pt,scoring_policy,diffLevel,hw_type);
 				} catch (SQLException | ParseException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
