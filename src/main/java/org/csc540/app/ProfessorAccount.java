@@ -286,8 +286,53 @@ public class ProfessorAccount {
 				break;
 			case 7:
 				// SETUP TA
+				profCourseList = ProfessorProcessor.getCourses(professorUser.getUserId());
+				System.out.println("\n\n");
+				System.out.println("----------------------------");
+				System.out.println("List of your Courses as Instructor:");
+				System.out.println("----------------------------");
+
+				i = 0;
+				while (i < profCourseList.size()) {
+					System.out.println((i + 1) + ". " + profCourseList.get(i).getCourseId());
+					i++;
+				}
+
+				System.out.println("Please enter Course ID for which you would like to add TA/s:\n\n");
+				System.out.println("### Press 0 to Go Back ###\n\n");
+				courseId = scanner.next();
+				if(courseId == "0") {
+					break;
+				}
+				else {
+					i = 0;
+					boolean course_found = false;
+					while (i < profCourseList.size()) {
+						if (profCourseList.get(i).getCourseId().equalsIgnoreCase(courseId)) {
+							System.out.println("Enter the users_ID of the TA you want to add: ");
+							scanner.nextLine();
+							String TA_id = scanner.nextLine();
+							ProfessorProcessor.addTA(TA_id, profCourseList.get(i).getCourseId());
+							
+							course_found = true;
+						}
+						i++;
+					}
+					if (!course_found) {
+						System.out.println("Invalid Course Id Entered..");
+						break;
+					}
+					else {
+						System.out.println("\n\n### Press 0 to Go Back ###\n\n");
+						newChoice = scanner.nextInt();
+						while (newChoice != 0) {
+							System.out.println("\nInvalid choice!! Please enter 0 to go back to previous page!!\n\n");
+							newChoice = scanner.nextInt();
+						}
+						break;
+					}
+				}
 				
-				break;
 			case 8:
 				// View/Edit Exercises
 				profCourseList = ProfessorProcessor.getCourses(professorUser.getUserId());
