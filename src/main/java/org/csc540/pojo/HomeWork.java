@@ -16,6 +16,13 @@ public class HomeWork {
 	int penalty_pts;
 	String score_policy;
 	int diff_level;
+	String hw_type;
+	public String getHw_type() {
+		return hw_type;
+	}
+	public void setHw_type(String hw_type) {
+		this.hw_type = hw_type;
+	}
 	public String getHw_id() {
 		return hw_id;
 	}

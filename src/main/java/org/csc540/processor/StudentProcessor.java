@@ -210,6 +210,9 @@ public class StudentProcessor {
 				temp.setScore_policy(score_policy);
 				int  diff_level = set.getInt("diff_level");
 				temp.setDiff_level(diff_level);
+				String hw_type = set.getString("hw_type");
+				temp.setHw_type(hw_type);
+				
 				
 				result.add(temp);
 			}
