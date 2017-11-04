@@ -14,8 +14,10 @@ import org.apache.log4j.Logger;
 import org.csc540.helper.DBFieldConstants;
 import org.csc540.pojo.Course;
 import org.csc540.pojo.CourseEnrollment;
+import org.csc540.pojo.CourseTopicMapping;
 import org.csc540.pojo.HomeWork;
 import org.csc540.pojo.Professor;
+import org.csc540.pojo.Topic;
 import org.csc540.pojo.Users;
 import org.csc540.session.Session;
 
@@ -185,6 +187,128 @@ public class ProfessorProcessor {
 
 	}
 	
+	public static List<Topic> getCourseTopics(String courseId) {
+		LOG.info("Processor to query the list of topics for the Course " + courseId);
+		List<Topic> topiclist = new ArrayList<Topic>();
+		try {
+			Connection conn = Session.getConnection();
+			String course_topic_map_query = "SELECT * FROM COURSE_TOPIC_MAPPING WHERE COURSE_ID='" + courseId + "'";
+			PreparedStatement ps = conn.prepareStatement(course_topic_map_query);
+			ResultSet course_topic_map_result = ps.executeQuery();
+
+			List<CourseTopicMapping> ctmap = convertToCourseTopicMappingPOJO(course_topic_map_result);
+//			List<Topic> topiclist = new ArrayList<Topic>();
+
+			int i = 0;
+			while (i < ctmap.size()) {
+				Topic topic = new Topic();
+				topic = getTopicDetails(ctmap.get(i).getTopicId());
+				topiclist.add(topic);
+				i++;
+			}
+
+			System.out.println("QUERY SUCCESSFUL!");
+
+		} catch (Exception e) {
+			LOG.error("Exception...", e);
+		}
+
+		return topiclist;
+	}
+
+	public static Topic getTopicDetails(String topicId) {
+		LOG.info("Processor to retrieve topic_name for the topic_id "+ topicId);
+		try {
+			Connection conn = Session.getConnection();
+			String topic_name_query = "SELECT * FROM TOPIC WHERE TOPIC_ID = '" + topicId + "'";
+			PreparedStatement ps = conn.prepareStatement(topic_name_query);
+			ResultSet topic_name_result = ps.executeQuery();
+
+			List<Topic> list = convertResultSetToTopicPOJO(topic_name_result);
+
+			if (!(list.size() == 0)) {
+				return list.get(0);
+			} else {
+				return null;
+			}
+		} catch (Exception e) {
+			LOG.error("Exception..", e);
+		}
+		return null;
+	}
+
+	public static List<Topic> convertResultSetToTopicPOJO(ResultSet set) {
+		LOG.info("Converting ResultSet to Topic POJO...");
+		List<Topic> result = null;
+		try {
+			result = new ArrayList<Topic>();
+			while (set.next()) {
+				Topic temp = new Topic();
+				String topicId = set.getString(DBFieldConstants.TOPIC_TOPIC_ID);
+				temp.setTopicId(topicId);
+				String topicName = set.getString(DBFieldConstants.TOPIC_TOPIC_NAME);
+				temp.setTopicName(topicName);
+				result.add(temp);
+			}
+		} catch (Exception e) {
+			LOG.error("Exception while converting the Result Set to Topic POJO", e);
+		}
+		return result;
+	}
+
+	public static List<CourseTopicMapping> convertToCourseTopicMappingPOJO(ResultSet set) {
+		LOG.info("Converting ResultSet to Course_Topic_Mapping POJO...");
+		List<CourseTopicMapping> result = null;
+		try {
+			result = new ArrayList<CourseTopicMapping>();
+			while (set.next()) {
+				CourseTopicMapping temp = new CourseTopicMapping();
+				String topicId = set.getString(DBFieldConstants.CTMAPPING_TOPIC_ID);
+				temp.setTopicId(topicId);
+				String courseId = set.getString(DBFieldConstants.CTMAPPING_COURSE_ID);
+				temp.setCourseId(courseId);
+				result.add(temp);
+			}
+		} catch (Exception e) {
+			LOG.error("Exception while converting the Result Set to Course Topic Mapping POJO", e);
+		}
+		return result;
+	}
+
+	public static void addQuesToBank(String quesId, String topicId, String quesText, String quesExp, int diffLevel,
+			String hint, String quesType) {
+		LOG.info("Processor to add question to question bank!");
+		try {
+			Connection conn = Session.getConnection();
+			String add_questobank_query = "INSERT INTO QUESTION (q_id, topic_id, question, q_expln, diff_level, hint, type) VALUES ('" + quesId
+					+ "','" + topicId + "','" + quesText + "','" + quesExp + "','" + diffLevel + "','" + hint + "','" + quesType + "')";
+			PreparedStatement ps = conn.prepareStatement(add_questobank_query);
+			ps.execute();
+			System.out.println("QUERY SUCCESSFUL!");
+
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+	}
+
+	public static void addAnswer(String ans_id, String quesId, String is_correct, String ans) {
+		
+		LOG.info("Processor to add answer to answer table!");
+		try {
+			Connection conn = Session.getConnection();
+			String add_ans_query = "INSERT INTO ANSWER (a_id, q_id, is_correct, a_expln) VALUES ('" + ans_id
+					+ "','" + quesId + "','" + is_correct + "','" + ans + "')";
+			System.out.println(add_ans_query);
+			PreparedStatement ps = conn.prepareStatement(add_ans_query);
+			ps.execute();
+			System.out.println("QUERY SUCCESSFUL!");
+
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+		
+	}
+	
 	public static List<HomeWork> getHWExcerciseForCourse(Course course) {
 		try {
 			Connection conn = Session.getConnection();
@@ -281,6 +405,7 @@ public class ProfessorProcessor {
 		}
 		
 	}
+	
 	public static void updateprofessorProfile(Professor professorUser) throws SQLException{
 		Connection conn = null;
 		PreparedStatement ps = null;
@@ -302,6 +427,23 @@ public class ProfessorProcessor {
 		}catch (Exception e) {
 			
 			LOG.info("there was an exception while updating the Professor details"+e.getMessage());
+		}
+		
+	}
+	
+	public static void addParamQues(String quesId, String param_id, String val_id, String param_name, String param_val) {
+		LOG.info("Processor to add parameterized question!");
+		try {
+			Connection conn = Session.getConnection();
+			String add_param_ques_query = "INSERT INTO QUESTION_PARAM (q_id, param_id, val_id, param_name, val) VALUES ('" + quesId
+					+ "','" + param_id + "','" + val_id + "','" + param_name + "','" + param_val + "')";
+			System.out.println(add_param_ques_query);
+			PreparedStatement ps = conn.prepareStatement(add_param_ques_query);
+			ps.execute();
+			System.out.println("QUERY SUCCESSFUL!");
+
+		} catch (Exception e) {
+			System.out.println(e);
 		}
 		
 	}

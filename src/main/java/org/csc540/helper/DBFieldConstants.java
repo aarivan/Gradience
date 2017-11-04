@@ -33,4 +33,12 @@ public class DBFieldConstants {
 	public static final String PROFESSOR_ADDRESS = "ADDRESS";
 	public static final String PROFESSOR_PHONE_NUMBER = "PH_NO";
 	public static final String PROFESSOR_EMAIL_ID = "EMAIL_ID";
+	
+	// COURSE_TOPIC_MAPPING
+	public static final String CTMAPPING_TOPIC_ID = "TOPIC_ID";
+	public static final String CTMAPPING_COURSE_ID = "COURSE_ID";
+	
+	// TOPIC
+	public static final String TOPIC_TOPIC_ID = "TOPIC_ID";
+	public static final String TOPIC_TOPIC_NAME = "TOPIC_NAME";
 }
