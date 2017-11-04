@@ -12,6 +12,7 @@ import org.apache.log4j.Logger;
 import org.csc540.pojo.Course;
 import org.csc540.pojo.CourseEnrollment;
 import org.csc540.pojo.HomeWork;
+import org.csc540.pojo.HwQuestion;
 import org.csc540.pojo.Professor;
 import org.csc540.pojo.Topic;
 import org.csc540.processor.ProfessorProcessor;
@@ -27,7 +28,7 @@ public class ProfessorAccount {
 		List<Course> profCourseList = null;
 		String courseId;
 		int i=0;
-		while (selection != 11) {
+		while (selection != 12) {
 			System.out.println("\n\n::: Instructor Home Page :::");
 			System.out.println(
 					"Enter the options for following actions: \n1. View/Edit Profile \n2. View Courses \n3. Add Courses \n4. Enroll a Student \n5. Drop a Student \n6. View Report \n7. Setup TA \n"
@@ -286,8 +287,53 @@ public class ProfessorAccount {
 				break;
 			case 7:
 				// SETUP TA
+				profCourseList = ProfessorProcessor.getCourses(professorUser.getUserId());
+				System.out.println("\n\n");
+				System.out.println("----------------------------");
+				System.out.println("List of your Courses as Instructor:");
+				System.out.println("----------------------------");
+
+				i = 0;
+				while (i < profCourseList.size()) {
+					System.out.println((i + 1) + ". " + profCourseList.get(i).getCourseId());
+					i++;
+				}
+
+				System.out.println("Please enter Course ID for which you would like to add TA/s:\n\n");
+				System.out.println("### Press 0 to Go Back ###\n\n");
+				courseId = scanner.next();
+				if(courseId == "0") {
+					break;
+				}
+				else {
+					i = 0;
+					boolean course_found = false;
+					while (i < profCourseList.size()) {
+						if (profCourseList.get(i).getCourseId().equalsIgnoreCase(courseId)) {
+							System.out.println("Enter the users_ID of the TA you want to add: ");
+							scanner.nextLine();
+							String TA_id = scanner.nextLine();
+							ProfessorProcessor.addTA(TA_id, profCourseList.get(i).getCourseId());
+							
+							course_found = true;
+						}
+						i++;
+					}
+					if (!course_found) {
+						System.out.println("Invalid Course Id Entered..");
+						break;
+					}
+					else {
+						System.out.println("\n\n### Press 0 to Go Back ###\n\n");
+						newChoice = scanner.nextInt();
+						while (newChoice != 0) {
+							System.out.println("\nInvalid choice!! Please enter 0 to go back to previous page!!\n\n");
+							newChoice = scanner.nextInt();
+						}
+						break;
+					}
+				}
 				
-				break;
 			case 8:
 				// View/Edit Exercises
 				profCourseList = ProfessorProcessor.getCourses(professorUser.getUserId());
@@ -477,8 +523,42 @@ public class ProfessorAccount {
 				break;
 			case 11:
 				// Add/Remove Questions from Exercises
-				
-				break;
+				profCourseList = ProfessorProcessor.getCourses(professorUser.getUserId());
+				System.out.println("\n\n");
+				System.out.println("----------------------------");
+				System.out.println("List of your Courses as Instructor:");
+				System.out.println("----------------------------");
+
+				i = 0;
+				while (i < profCourseList.size()) {
+					System.out.println((i + 1) + ". " + profCourseList.get(i).getCourseId());
+					i++;
+				}
+
+				System.out.println("Please enter Course ID for which you would like view HW Excercise/s:\n\n");
+				System.out.println("### Press 0 to Go Back ###\n\n");
+				courseId = scanner.next();
+				if(courseId == "0") {
+					break;
+				}
+				else {
+					i = 0;
+					boolean course_found = false;
+					while (i < profCourseList.size()) {
+						if (profCourseList.get(i).getCourseId().equalsIgnoreCase(courseId)) {
+							hwQues( profCourseList.get(i),scanner);
+							course_found = true;
+						}
+						i++;
+					}
+					if (!course_found) {
+						System.out.println("Invalid Course Id Entered..");
+						break;
+					}
+					else {
+						break;
+					}
+				}
 			case 12:
 				// Logout
 				selection = 12;
@@ -553,7 +633,7 @@ public class ProfessorAccount {
 	}
 	public static void viewHWExercise( Course course, Scanner scanner) throws ParseException {
 		// TODO Auto-generated method stub
-		List<HomeWork> listHWExcercise = ProfessorProcessor.getHWExcerciseForCourse(course);
+		List<HomeWork> listHWExcercise = ProfessorProcessor.getHWExcerciseForCourse(course.getCourseId());
 		System.out.println("\n\n");
 		System.out.println("----------------------------");
 		System.out.println("List of HW Excercise/s for the course:");
@@ -585,6 +665,112 @@ public class ProfessorAccount {
 			}
 				
 			}
+		
+	}
+	
+	public static void hwQues( Course course, Scanner scanner) throws ParseException {
+		// TODO Auto-generated method stub
+		List<HomeWork> listHWExcercise = ProfessorProcessor.getHWExcerciseForCourse(course.getCourseId());
+		System.out.println("\n\n");
+		System.out.println("----------------------------");
+		System.out.println("List of HW Excercise/s for the course:");
+		System.out.println("----------------------------");
+
+		int i = 0;
+		while (i < listHWExcercise.size()) {
+			System.out.println((i + 1) + ". HW ID: " + listHWExcercise.get(i).getHw_id()+"HW Name: "+listHWExcercise.get(i).getHW_name());
+			i++;
+		}
+		System.out.println("Please enter HW ID for which you would like to add or remove questions:\n\n");
+		
+		String HWId = scanner.next();
+		
+		List<HomeWork> listHWDetails = ProfessorProcessor.getHWExcerciseDetails(HWId);
+			i = 0;
+			boolean HW_found = false;
+			while (i < listHWDetails.size()) {
+				if (listHWDetails.get(i).getHw_id().equalsIgnoreCase(HWId)) {
+					addorremoveQuestionsExercise( listHWDetails.get(i), scanner);
+					HW_found = true;
+				}
+				i++;
+			
+			if (!HW_found) {
+				System.out.println("Invalid HW Id Entered..");
+				viewHWExercise(course, scanner);
+				break;
+			}
+				
+			}
+		
+	}
+	
+
+
+	public static void addorremoveQuestionsExercise(HomeWork homeWork, Scanner scanner) {
+		// TODO Auto-generated method stub
+		int selection = 12;
+		while(selection!=0){
+			System.out.println("\n\n Homework: "+homeWork.getHW_name() +"\n");
+			System.out.println("1. Add Questions \n2. Remove Questions \nPress 0 to exit\n\n");
+			selection = scanner.nextInt();
+			switch(selection) {
+			case 0:
+				selection = 0;
+				break;
+			case 1:
+				addQuestionstoExercise(homeWork,scanner);
+				break;
+			case 2:
+				removeQuestionsfromExercise(homeWork,scanner);
+				break;
+			default: System.out.println("\nInvalid choice. Please enter a valid choice !!\n");
+			}
+			
+		}
+		
+	}
+
+	public static void removeQuestionsfromExercise(HomeWork homeWork, Scanner scanner) {
+		String q_id = "Y";
+		do {
+			System.out.println("\n\n Homework: "+homeWork.getHW_name() +"\n");
+			
+			List<HwQuestion> listHWQues = ProfessorProcessor.listQuestionsfromExercise(homeWork.getHw_id());
+			int i = 0;
+			System.out.println("\nList of Question IDs in this Exercise:\n");
+			while (i < listHWQues.size()) {
+				System.out.println((i + 1) + ". " + listHWQues.get(i).getquestionId());
+				i++;
+			}
+			System.out.println("\n\nEnter a question ID to remove from this Homework: ");
+			scanner.nextLine();
+			q_id = scanner.nextLine();
+			
+			ProfessorProcessor.removeQuestionfromExercise(homeWork.getHw_id(), q_id);
+
+			System.out.println("Do you want to remove another question? (Y/N)");
+			q_id = scanner.next();
+
+		} while (q_id.equals("Y"));
+		
+	}
+
+	public static void addQuestionstoExercise(HomeWork homeWork, Scanner scanner) {
+
+		String q_id = "Y";
+		do {
+			System.out.println("\n\n Homework: "+homeWork.getHW_name() +"\n");
+			System.out.println("Enter a question ID to add into this Homework: ");
+			scanner.nextLine();
+			q_id = scanner.nextLine();
+			
+			ProfessorProcessor.addQuestiontoExercise(homeWork.getHw_id(), q_id);
+
+			System.out.println("Do you want to add another question? (Y/N)");
+			q_id = scanner.next();
+
+		} while (q_id.equals("Y"));
 		
 	}
 

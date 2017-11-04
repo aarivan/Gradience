@@ -9,6 +9,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Scanner;
 
 import org.apache.log4j.Logger;
 import org.csc540.helper.DBFieldConstants;
@@ -16,6 +17,7 @@ import org.csc540.pojo.Course;
 import org.csc540.pojo.CourseEnrollment;
 import org.csc540.pojo.CourseTopicMapping;
 import org.csc540.pojo.HomeWork;
+import org.csc540.pojo.HwQuestion;
 import org.csc540.pojo.Professor;
 import org.csc540.pojo.Topic;
 import org.csc540.pojo.Users;
@@ -309,10 +311,10 @@ public class ProfessorProcessor {
 		
 	}
 	
-	public static List<HomeWork> getHWExcerciseForCourse(Course course) {
+	public static List<HomeWork> getHWExcerciseForCourse(String course_id) {
 		try {
 			Connection conn = Session.getConnection();
-			String getHW = "select * from homework where course_id='"+course.getCourseId()+"'";
+			String getHW = "select * from homework where course_id='"+course_id+"'";
 			PreparedStatement ps = conn.prepareStatement(getHW);
 			ResultSet getHW_result = ps.executeQuery();
 			List<HomeWork> listHW = StudentProcessor.convertResultSetToHWPOJO(getHW_result);
@@ -447,5 +449,88 @@ public class ProfessorProcessor {
 		}
 		
 	}
+	public static void addTA(String ta_id, String courseId) {
+		LOG.info("Processor to TA!");
+		try {
+			Connection conn = Session.getConnection();
+			String add_TA_query = "INSERT INTO TA (ta_uid, course_id) VALUES ('" + ta_id + "','"  + courseId + "')";
+			System.out.println(add_TA_query);
+			PreparedStatement ps = conn.prepareStatement(add_TA_query);
+			ps.execute();
+			System.out.println("QUERY SUCCESSFUL!");
+
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+		
+		
+	}
+	public static void addQuestiontoExercise(String hw_id, String q_id) {
+		LOG.info("Adding Question into Exercise!");
+		try {
+			Connection conn = Session.getConnection();
+			String add_ques_exercise = "INSERT INTO HW_QUESTION (hw_id, ques_id) VALUES ('" + hw_id + "','"  + q_id + "')";
+			System.out.println(add_ques_exercise);
+			PreparedStatement ps = conn.prepareStatement(add_ques_exercise);
+			ps.execute();
+			System.out.println("QUERY SUCCESSFUL!");
+
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+		
+	}
+	public static void removeQuestionfromExercise(String hw_id, String q_id) {
+		LOG.info("Removing Question from Exercise!");
+		try {
+			Connection conn = Session.getConnection();
+			String del_ques_exercise = "DELETE FROM HW_QUESTION WHERE hw_id = '" + hw_id + "' AND ques_id = '" + q_id + "'";
+			System.out.println(del_ques_exercise);
+			PreparedStatement ps = conn.prepareStatement(del_ques_exercise);
+			ps.execute();
+			System.out.println("QUERY SUCCESSFUL!");
+
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+		
+	}
+	public static List<HwQuestion> listQuestionsfromExercise(String hw_id) {
+		try {
+			Connection conn = Session.getConnection();
+			String getHW = "select * from HW_QUESTION where hw_id = '"+hw_id+"'";
+			PreparedStatement ps = conn.prepareStatement(getHW);
+			ResultSet getHW_result = ps.executeQuery();
+			List<HwQuestion> listHW = ProfessorProcessor.convertResultSetToHWQuesPOJO(getHW_result);
+			//System.out.println("getHWExcerciseForCourse " +listHW.get(1).getHw_id());
+			return listHW;
+			
+		} catch (Exception e) {
+			LOG.error("Exception while processing  open HW. viewHWForCourse", e);
+		}
+		return null;
+		
+	}
+	
+	public static List<HwQuestion> convertResultSetToHWQuesPOJO(ResultSet set) {
+		LOG.info("Converting ResultSet to Topic POJO...");
+		List<HwQuestion> result = null;
+		try {
+			result = new ArrayList<HwQuestion>();
+			while (set.next()) {
+				HwQuestion temp = new HwQuestion();
+				String qId = set.getString(DBFieldConstants.QUESTIONID);
+				temp.setquestionId(qId);
+				String hwId = set.getString(DBFieldConstants.HWID);
+				temp.sethwId(hwId);
+				result.add(temp);
+			}
+		} catch (Exception e) {
+			LOG.error("Exception while converting the Result Set to HwQuestion POJO", e);
+		}
+		return result;
+	}
+
+
 	
 }
