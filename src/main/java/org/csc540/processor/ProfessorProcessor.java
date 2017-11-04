@@ -311,4 +311,21 @@ public class ProfessorProcessor {
 		
 	}
 
+	public static void addParamQues(String quesId, String param_id, String val_id, String param_name, String param_val) {
+		LOG.info("Processor to add parameterized question!");
+		try {
+			Connection conn = Session.getConnection();
+			String add_param_ques_query = "INSERT INTO QUESTION_PARAM (q_id, param_id, val_id, param_name, val) VALUES ('" + quesId
+					+ "','" + param_id + "','" + val_id + "','" + param_name + "','" + param_val + "')";
+			System.out.println(add_param_ques_query);
+			PreparedStatement ps = conn.prepareStatement(add_param_ques_query);
+			ps.execute();
+			System.out.println("QUERY SUCCESSFUL!");
+
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+		
+	}
+
 }
