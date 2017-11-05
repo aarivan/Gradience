@@ -313,7 +313,7 @@ public class ProfessorAccount {
 							System.out.println("\nList of Reports:\n");
 							while (j < report_details.size()) {
 								System.out.println((j + 1) + " Student ID: " + report_details.get(j).getStud_id() + " First Name: " + report_details.get(j).getFirst_name() + " Last Name: " + report_details.get(j).getLast_name()
-								+ " Course ID: " + report_details.get(j).getCourse_id() + " Homework ID: " + report_details.get(j).getHw_id() + " Total Score: " + report_details.get(j).getTotal_score());
+								+ " Course ID: " + report_details.get(j).getCourse_id() + " Homework ID: " + report_details.get(j).getHw_id() + " Attempt ID: " + report_details.get(j).getAttempt_id() + " Total Score: " + report_details.get(j).getTotal_score());
 								j++;
 						}
 						i++;

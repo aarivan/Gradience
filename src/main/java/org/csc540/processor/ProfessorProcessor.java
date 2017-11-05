@@ -549,6 +549,8 @@ public class ProfessorProcessor {
 				temp.setHw_id(hw_id);
 				String course_id = set.getString(DBFieldConstants.REPORT_COURSE_ID);
 				temp.setCourse_id(course_id);
+				String attempt_id = set.getString(DBFieldConstants.REPORT_ATTEMPT_ID);
+				temp.setAttempt_id(attempt_id);
 				String total_score = set.getString(DBFieldConstants.REPORT_TOTAL_SCORE);
 				temp.setCourse_id(course_id);
 				result.add(temp);
