@@ -1,11 +1,16 @@
 package org.csc540.app;
 
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
 import java.util.Scanner;
 
 import org.apache.log4j.Logger;
 import org.csc540.helper.DBFieldConstants;
+import org.csc540.pojo.HomeWork;
 import org.csc540.pojo.Student;
+import org.csc540.processor.ProfessorProcessor;
 import org.csc540.processor.StudentProcessor;
 
 public class StudentAccount {
@@ -186,5 +191,53 @@ public class StudentAccount {
 		System.out.println("List of your Courses as Student:");
 		System.out.println("----------------------------");
 		StudentProcessor.getCoursesOfStudent(currStudent.getUserId() ,scanner);
+		System.out.println("Please enter Course ID for which you would like to view:");
+		String courseId = scanner.next();
+		viewHWForCourse(courseId,scanner,currStudent.getUserId());
+	}
+	
+	public static void viewHWForCourse(String courseId,Scanner scanner ,String user_id) {
+		System.out.println("######Display HW for course: "+courseId);
+		System.out.println("\n 1.Current Open HWs \n2. Past HWs");
+		System.out.println("Enter 1 for Current HWs and 2 For Past HWs:");
+		int HWChoice = scanner.nextInt();
+		
+        if (HWChoice==1) {
+        		List<HomeWork> listHW =StudentProcessor.getOpenHW(courseId);
+    			System.out.println("###### Open HWs #######");
+    			for(int i=0; i<listHW.size(); i++){
+    				System.out.println("HW ID: "+listHW.get(i).getHw_id()+" HW Name: "+listHW.get(i).getHW_name());
+    			}	
+    			System.out.println("Enter the HW ID to attempt that HW: ");
+    			String hw_id_attempt = scanner.next();
+    			StudentProcessor.getAttemptsForHW(hw_id_attempt,user_id);
+    		
+        	
+        }else if (HWChoice==2) {
+        	List<HomeWork> listHW =StudentProcessor.getPastHW(courseId);
+        	System.out.println("###### Past HWs #######");
+			for(int i=0; i<listHW.size(); i++){
+				System.out.println("HW ID: "+listHW.get(i).getHw_id()+" HW Name: "+listHW.get(i).getHW_name());
+			}
+			System.out.println("Enter the HW ID to view that HW: ");
+			String hw_id = scanner.next();
+			
+			List<HomeWork> listHWDetail = ProfessorProcessor.getHWExcerciseDetails(hw_id);
+			int total_score = StudentProcessor.getTotalscoreFromScoringPolicy(hw_id,user_id);
+			int studentAttemptCount = StudentProcessor.getCountStudentAttempt(hw_id,user_id);
+			System.out.println("***********Details for your HW: ********"+listHWDetail.get(0).getHw_id() +"HW NAME: "+listHWDetail.get(0).getHW_name());
+			System.out.println("HW Start Date "+listHWDetail.get(0).getHw_st_date());
+			System.out.println("HW Start Date "+listHWDetail.get(0).getHw_end_date());
+			System.out.println("HW Scoring policy "+listHWDetail.get(0).getScore_policy());
+			System.out.println("Total score based on the scoring policy"+total_score);
+			System.out.println("HW Attempts allowed "+listHWDetail.get(0).getMax_no_of_tries());
+			System.out.println("Your number of attempts "+studentAttemptCount);
+        	
+        }else if(HWChoice!=1 || HWChoice!=2) {
+        	System.out.println("##########Invalid Choice########");
+        	System.out.println("Enter 1 for Current HWs and 2 For Past HWs:");
+    		HWChoice = scanner.nextInt();
+        }
+		
 	}
 }
