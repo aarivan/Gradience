@@ -10,6 +10,14 @@ public class Attempts {
 	int value_id;
 	int score_per_ques;
 	int total_score;
+	String Q_EXPLN;
+	
+	public String getQ_EXPLN() {
+		return Q_EXPLN;
+	}
+	public void setQ_EXPLN(String q_EXPLN) {
+		Q_EXPLN = q_EXPLN;
+	}
 	public int getTotal_score() {
 		return total_score;
 	}

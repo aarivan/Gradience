@@ -236,17 +236,18 @@ public class StudentAccount {
 			System.out.println("Your number of attempts "+studentAttemptCount);
 			if(listAttempts.size()!=0) {
 				for(int i=0; i<=listAttempts.size()-1 ;i++) {
-					System.out.println("\n******** DISPLAY DETAILS FOR THIS ATTEMPT: ************"+listAttempts.get(i).getAttempt_id());
+					System.out.println("\n******** DISPLAY DETAILS FOR THIS ATTEMPT: ******"+listAttempts.get(i).getAttempt_id()+"Your Score for this attempt"+listAttempts.get(i).getTotal_score());
 					System.out.println("Question id:  "+listAttempts.get(i).getQues_id());
 					System.out.println("Question Text:  "+listAttempts.get(i).getQues_text());
 					System.out.println("Answer you chose: "+listAttempts.get(i).getAns_id());
 					System.out.println("Answer Value: "+listAttempts.get(i).getValue_id());
-					System.out.println("Score that question: "+listAttempts.get(i).getScore_per_ques());
+					System.out.println("Score of that question: "+listAttempts.get(i).getScore_per_ques());
 					if(listAttempts.get(i).getScore_per_ques()<=0) {
 						System.out.println("Your answer is : INCORRECT");	
 					}else {
 						System.out.println("Your answer is : CORRECT");	
 					}
+					System.out.println("Solution : "+listAttempts.get(i).getQ_EXPLN());
 				}
 			}
         	
