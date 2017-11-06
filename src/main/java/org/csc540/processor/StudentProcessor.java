@@ -1,9 +1,11 @@
 package org.csc540.processor;
 
+import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -11,6 +13,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import org.apache.log4j.Logger;
 import org.csc540.helper.DBFieldConstants;
+import org.csc540.pojo.Attempts;
 import org.csc540.pojo.HomeWork;
 import org.csc540.pojo.Student;
 import org.csc540.session.Session;
@@ -131,9 +134,7 @@ public class StudentProcessor {
 				System.out.println(i++ +". " +getCoursesForStudent_result.getString(1));
 				courseIDForStudents.add(getCoursesForStudent_result.getString(1));
 			}
-			System.out.println("Please enter Course ID for which you would like to view:");
-			String courseId = scanner.next();
-			viewHWForCourse(courseId,scanner);
+			
 			
 			
 		} catch (Exception e) {
@@ -142,43 +143,7 @@ public class StudentProcessor {
 		
 		return courseIDForStudents;
 	}
-	public static void viewHWForCourse(String courseId,Scanner scanner) {
-		System.out.println("######Display HW for course: "+courseId);
-		System.out.println("/n 1.Current Open HWs /n2. Past HWs");
-		System.out.println("Enter 1 for Current HWs and 2 For Past HWs:");
-		int HWChoice = scanner.nextInt();
-		Date today = new Date();  
-        SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");
-         String todayFormated =formatter.format(today);
-        System.out.println("Today in dd-MMM-yyyy format : "+formatter.format(today));
-        if (HWChoice==1) {
-        	try {
-    			Connection conn = Session.getConnection();
-    			String getOpenHW = "select * from homework where course_id='"+courseId+"' and hw_end_date >'"+todayFormated+"'";
-    			PreparedStatement ps = conn.prepareStatement(getOpenHW);
-    			ResultSet getCoursesForStudent_result = ps.executeQuery();
-    			List<HomeWork> listHW = convertResultSetToHWPOJO(getCoursesForStudent_result);
-    			while(listHW.size() >0) {
-    			for(int i=0; i<listHW.size(); i++){
-    				System.out.println("Open ");
-    				listHW.get(i).getHw_id();
-    				}
-    			}
-    			
-    			
-    		} catch (Exception e) {
-    			LOG.error("Exception while processing  open HW. viewHWForCourse", e);
-    		}
-        	
-        }else if (HWChoice==2) {
-        	
-        }else if(HWChoice!=1 || HWChoice!=2) {
-        	System.out.println("##########Invalid Choice########");
-        	System.out.println("Enter 1 for Current HWs and 2 For Past HWs:");
-    		HWChoice = scanner.nextInt();
-        }
-		
-	}
+	
 	
 	public static List<HomeWork> convertResultSetToHWPOJO(ResultSet set) {
 		LOG.info("Converting ResultSet to HW POJO...");
@@ -210,6 +175,9 @@ public class StudentProcessor {
 				temp.setScore_policy(score_policy);
 				int  diff_level = set.getInt("diff_level");
 				temp.setDiff_level(diff_level);
+				String hw_type = set.getString("hw_type");
+				temp.setHw_type(hw_type);
+				
 				
 				result.add(temp);
 			}
@@ -218,5 +186,156 @@ public class StudentProcessor {
 		}
 		return result;
 	}
+	
+	public static void getAttemptsForHW(String hw_id, String user_id) {
+		try {
+			Connection conn = Session.getConnection();
+			String getAttempt = "select distinct attempt_ID from incomplete_attempts where hw_id='"+hw_id+"' and student_id='"+user_id+"'";
+			System.out.println(getAttempt);
+			PreparedStatement ps = conn.prepareStatement(getAttempt);
+			ResultSet getAttempt_result = ps.executeQuery();
+			int i = 1;
+			System.out.println("Attempt For HW ID :"+hw_id);
+			while (getAttempt_result.next()) {
+				System.out.println(i++ +". " +getAttempt_result.getString(1));
+			}
+			
+			
+			
+		} catch (Exception e) {
+			LOG.error("Exception while processing courses for students.getCoursesOfStudent", e);
+		}
+		
+	}
+	
+	public static List<HomeWork> getPastHW(String courseId) {
+	try {
+		Connection conn = Session.getConnection();
+		String getpastHW = "select * from past_HW_ForCourse where course_id='"+courseId+"'";
+		PreparedStatement ps = conn.prepareStatement(getpastHW);
+		ResultSet getCoursesForStudent_result = ps.executeQuery();
+		List<HomeWork> listHW = convertResultSetToHWPOJO(getCoursesForStudent_result);
+		return listHW;
+		
+		
+		
+	} catch (Exception e) {
+		LOG.error("Exception while processing  open HW. viewHWForCourse", e);
+	}
+	return null;
+	}
+	
+	public static List<HomeWork> getOpenHW(String courseId) {
+		try {
+			Connection conn = Session.getConnection();
+			String getopenHW = "select * from open_HW_ForCourse where course_id='"+courseId+"'";
+			PreparedStatement ps = conn.prepareStatement(getopenHW);
+			ResultSet getCoursesForStudent_result = ps.executeQuery();
+			List<HomeWork> listHW = convertResultSetToHWPOJO(getCoursesForStudent_result);
+			return listHW;
+			
+			
+			
+		} catch (Exception e) {
+			LOG.error("Exception while processing  open HW. viewHWForCourse", e);
+		}
+		return null;
+		}
+	
+	
+	
+	public static int getTotalscoreFromScoringPolicy(String hw_id,String user_id) {
+		int result=0;
+		try {
+			Connection conn = Session.getConnection();
+			String getTotalScore = "select  cal_totalscore('"+hw_id+"','"+user_id+"') from dual";
+			PreparedStatement ps = conn.prepareStatement(getTotalScore);
+			//CallableStatement ps = conn.prepareCall(getTotalScore);
+			//ps.registerOutParameter(1, Types.INTEGER);
+			ResultSet set = ps.executeQuery();
+			while (set.next()) {
+			result = set.getInt(1);
+			}
+			//int result = ps.getInt(1);
+			return result;	
+			
+		} catch (Exception e) {
+			LOG.error("Exception while processing  open getTotalscoreFromScoringPolicy", e);
+		}
+		return 0;
+		}
+	
+	public static int getCountStudentAttempt(String hw_id,String user_id) {
+		int result=0;
+		try {
+			Connection conn = Session.getConnection();
+			String getAttemptCount = "select count(*) from attempts where hw_id='"+hw_id+"' and student_id='"+user_id+"'";
+			PreparedStatement ps = conn.prepareStatement(getAttemptCount);
+			ResultSet set = ps.executeQuery();
+			while (set.next()) {
+			result = set.getInt(1);
+			}
+			//int result = ps.getInt(1);
+			return result;	
+			
+		} catch (Exception e) {
+			LOG.error("Exception while processing  open getTotalscoreFromScoringPolicy", e);
+		}
+		return 0;
+		}
+	
+	public static List<Attempts> getCompleteAttemptsdetails(String hw_id, String user_id) {
+		try {
+			Connection conn = Session.getConnection();
+			String getattempDetails = "select * from complete_attempts_details where hw_id='"+hw_id+"' and STUDENT_ID='"+user_id+"'";
+			PreparedStatement ps = conn.prepareStatement(getattempDetails);
+			ResultSet getattempDetails_result = ps.executeQuery();
+			List<Attempts> listAttempt = convertResultSetToAttemptPOJO(getattempDetails_result);
+			return listAttempt;
+			
+			
+			
+		} catch (Exception e) {
+			LOG.error("Exception while processing  open HW. viewHWForCourse", e);
+		}
+		return null;
+		}
+	
+
+	
+	public static List<Attempts> convertResultSetToAttemptPOJO(ResultSet set) {
+		List<Attempts> result = null;
+		try {
+			result = new ArrayList<Attempts>();
+			while (set.next()) {
+				Attempts temp = new Attempts();
+
+				String hw_id = set.getString("hw_id");
+				temp.setHw_id(hw_id);
+				String student_id = set.getString("student_id");
+				temp.setStudent_id(student_id);
+				int attempt_id = set.getInt("attempt_id");
+				temp.setAttempt_id(attempt_id);
+				String ques_id = set.getString("ques_id");
+				temp.setQues_id(ques_id);
+				int  value_id = set.getInt("value_id");
+				temp.setValue_id(value_id);
+				int  score_per_ques = set.getInt("score_per_ques");
+				temp.setScore_per_ques(score_per_ques);
+				String ques_text = set.getString("ques_text");
+				temp.setQues_text(ques_text);
+				String ans_id = set.getString("ans_id");
+				temp.setAns_id(ans_id);
+				int total_score = set.getInt("total_score");
+				temp.setTotal_score(total_score);
+				
+				result.add(temp);
+			}
+		} catch (Exception e) {
+			LOG.error("Exception while converting the Result Set to attempts pojo", e);
+		}
+		return result;
+		
+	}	
 
 }

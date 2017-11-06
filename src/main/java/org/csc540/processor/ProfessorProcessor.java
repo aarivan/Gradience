@@ -19,6 +19,7 @@ import org.csc540.pojo.CourseTopicMapping;
 import org.csc540.pojo.HomeWork;
 import org.csc540.pojo.HwQuestion;
 import org.csc540.pojo.Professor;
+import org.csc540.pojo.Report;
 import org.csc540.pojo.Topic;
 import org.csc540.pojo.Users;
 import org.csc540.session.Session;
@@ -356,7 +357,8 @@ public class ProfessorProcessor {
 				+ homeWork.getHW_name() + "',max_no_of_tries=" + homeWork.getMax_no_of_tries() + "" + ",hw_st_date='"
 				+ startFormated + "',hw_end_date ='" + endFormated + "'" + 
 				",correct_pts="+homeWork.getCorrect_pts()+""+",penalty_pts="+homeWork.getPenalty_pts()+""+
-				",score_policy='"+homeWork.getScore_policy()+"'"+",diff_level="+homeWork.getDiff_level()+""
+				",score_policy='"+homeWork.getScore_policy()+"'"+",diff_level="+homeWork.getDiff_level()+""+
+				",hw_type='"+homeWork.getHw_type()+"'"
 				+ " WHERE hw_id = '"
 				+ homeWork.getHw_id() + "'";
 
@@ -376,7 +378,7 @@ public class ProfessorProcessor {
 		
 	}
 	public static void addHomeWork(String hw_id,String course_Id,String topicId,String hwName, int maxTries, String hwStartDate,String hwEndDate,int correct_pt,
-			int penalty_pt,String scoring_policy,int diffLevel) throws SQLException, ParseException {
+			int penalty_pt,String scoring_policy,int diffLevel, String hw_type) throws SQLException, ParseException {
 		Connection conn = null;
 		PreparedStatement ps = null;
 		 
@@ -387,13 +389,12 @@ public class ProfessorProcessor {
       
 
 		String insertTableSQL = "INSERT INTO HOMEWORK (hw_id, course_id, topic_id, HW_name, max_no_of_tries, hw_st_date, hw_end_date, "
-				+ "correct_pts, penalty_pts, score_policy, diff_level) VALUES "
+				+ "correct_pts, penalty_pts, score_policy, diff_level,hw_type) VALUES "
 				+ "('"+hw_id+"', '"+course_Id+"', '"+topicId+"','"+hwName+"', "+maxTries
 						+ ",'"+hwStartDate+"','"+hwEndDate+"', "+correct_pt+", "+penalty_pt+", "
-								+ "'"+scoring_policy+"', "+diffLevel+")";
+								+ "'"+scoring_policy+"', "+diffLevel+",'"+hw_type+"')";
 
 		try {
-			System.out.println(insertTableSQL);
 			conn = Session.getConnection();
 			ps = conn.prepareStatement(insertTableSQL);
 			ps.execute();
@@ -529,6 +530,52 @@ public class ProfessorProcessor {
 			LOG.error("Exception while converting the Result Set to HwQuestion POJO", e);
 		}
 		return result;
+	}
+	
+	private static List<Report> convertResultReportPOJO(ResultSet set) {
+		LOG.info("Converting ResultSet to Report POJO...");
+		List<Report> result = null;
+		try {
+			result = new ArrayList<Report>();
+			while (set.next()) {
+				Report temp = new Report();
+				String first_name = set.getString(DBFieldConstants.REPORT_FNAME);
+				temp.setFirst_name(first_name);;
+				String last_name = set.getString(DBFieldConstants.REPORT_LNAME);
+				temp.setLast_name(last_name);
+				String s_id = set.getString(DBFieldConstants.REPORT_SID);
+				temp.setStud_id(s_id);
+				String hw_id = set.getString(DBFieldConstants.REPORT_HW_ID);
+				temp.setHw_id(hw_id);
+				String course_id = set.getString(DBFieldConstants.REPORT_COURSE_ID);
+				temp.setCourse_id(course_id);
+				String attempt_id = set.getString(DBFieldConstants.REPORT_ATTEMPT_ID);
+				temp.setAttempt_id(attempt_id);
+				String total_score = set.getString(DBFieldConstants.REPORT_TOTAL_SCORE);
+				temp.setCourse_id(course_id);
+				result.add(temp);
+			}
+		} catch (Exception e) {
+			LOG.error("Exception while converting the Result Set to Report POJO", e);
+		}
+		return result;
+		
+	}
+	public static List<Report> viewReport(String courseId) {
+		List<Report> reportlist = null;
+		try {
+			Connection conn = Session.getConnection();
+			String getReport = "select * from Stud_Reports where course_id = '"+ courseId +"'";
+			PreparedStatement ps = conn.prepareStatement(getReport);
+			ResultSet Studreport_result = ps.executeQuery();
+			reportlist = ProfessorProcessor.convertResultReportPOJO(Studreport_result);
+			return reportlist;
+			
+		} catch (Exception e) {
+			LOG.error("Exception while processing  view Report ", e);
+		}
+		return null;
+		
 	}
 
 
