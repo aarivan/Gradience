@@ -8,11 +8,14 @@ import java.util.Scanner;
 
 import org.apache.log4j.Logger;
 import org.csc540.helper.DBFieldConstants;
+import org.csc540.pojo.Answer;
 import org.csc540.pojo.Attempts;
+import org.csc540.pojo.Attempts_info;
 import org.csc540.pojo.HomeWork;
 import org.csc540.pojo.Student;
 import org.csc540.processor.ProfessorProcessor;
 import org.csc540.processor.StudentProcessor;
+import java.util.Random;
 
 public class StudentAccount {
 	public static final Logger LOG = Logger.getLogger(StudentAccount.class);
@@ -194,25 +197,108 @@ public class StudentAccount {
 		StudentProcessor.getCoursesOfStudent(currStudent.getUserId() ,scanner);
 		System.out.println("Please enter Course ID for which you would like to view:");
 		String courseId = scanner.next();
-		viewHWForCourse(courseId,scanner,currStudent.getUserId());
+		viewHWForCourse(courseId,scanner,currStudent);
 	}
 	
-	public static void viewHWForCourse(String courseId,Scanner scanner ,String user_id) {
+	public static void viewHWForCourse(String courseId,Scanner scanner,Student currStudent) {
+		String user_id = currStudent.getUserId();
 		System.out.println("######Display HW for course: "+courseId);
 		System.out.println("\n 1.Current Open HWs \n2. Past HWs");
 		System.out.println("Enter 1 for Current HWs and 2 For Past HWs:");
 		int HWChoice = scanner.nextInt();
-		
+		int choice= 1;
+		String q_id;
         if (HWChoice==1) {
         		List<HomeWork> listHW =StudentProcessor.getOpenHW(courseId);
     			System.out.println("###### Open HWs #######");
     			for(int i=0; i<listHW.size(); i++){
     				System.out.println("HW ID: "+listHW.get(i).getHw_id()+" HW Name: "+listHW.get(i).getHW_name());
-    			}	
-    			System.out.println("Enter the HW ID to attempt that HW: ");
-    			String hw_id_attempt = scanner.next();
-    			StudentProcessor.getAttemptsForHW(hw_id_attempt,user_id);
-    		
+    			}
+    			System.out.println(listHW.get(0));
+    			if(listHW.size()>0){
+    				System.out.println("Enter the HW ID: ");
+        			String hw_id = scanner.next();
+        			System.out.println("\n 1. View Completed Attempts \n2.Incomplete/New Attempts \n\n Press any other number to exit!\n");
+        			int new_choice = scanner.nextInt();
+        			if (new_choice == 2){
+        				// Getting incomplete attempt
+            			Attempts_info attempts_info = StudentProcessor.getAttemptsInfo(hw_id,user_id,courseId);
+            			// Now we have one attempt_id that is incomplete (or) a null attempt_id
+            			int a_id = attempts_info.getAttempt_id();
+            			if(a_id !=0){
+            				// Incomplete attempt
+            				// call retreive_question()
+            				q_id = StudentProcessor.retrieveQuestion(a_id,hw_id,user_id,courseId);
+            				System.out.println(q_id);
+            				// Present the user with question details plus 4 options
+            				takeTest(a_id,hw_id,user_id,courseId,q_id,scanner,currStudent);
+            			}
+            			else {
+            				// New attempt
+            				// Call add_atttempt() and then retreive_question()
+            				a_id = StudentProcessor.addAttempt(hw_id,user_id,courseId);
+            				System.out.println(a_id);
+            				q_id = StudentProcessor.retrieveQuestion(a_id,hw_id,user_id,courseId);
+            				System.out.println(q_id);
+            				// Present the user with question details plus 4 options
+            				takeTest(a_id,hw_id,user_id,courseId,q_id,scanner,currStudent);
+            			}
+            			
+        			}
+        			else if (new_choice == 1){
+        				// Get completed attempts
+        	        	List<HomeWork> listHW1 =StudentProcessor.getPastHW(courseId);
+        	        	System.out.println("###### Past HWs #######");
+        				for(int i=0; i<listHW1.size(); i++){
+        					System.out.println("HW ID: "+listHW1.get(i).getHw_id()+" HW Name: "+listHW1.get(i).getHW_name());
+        				}
+        				System.out.println("Enter the HW ID to view that HW: ");
+        				String hw_id1 = scanner.next();
+        				
+        				List<HomeWork> listHWDetail = ProfessorProcessor.getHWExcerciseDetails(hw_id1);
+        				int total_score = StudentProcessor.getTotalscoreFromScoringPolicy(hw_id1,user_id);
+        				int studentAttemptCount = StudentProcessor.getCountStudentAttempt(hw_id1,user_id);
+        				List<Attempts> listAttempts = StudentProcessor.getCompleteAttemptsdetails(hw_id1,user_id);
+        				System.out.println("\n***********Details for your HW: ********"+listHWDetail.get(0).getHw_id() +"HW NAME: "+listHWDetail.get(0).getHW_name());
+        				System.out.println("HW Start Date "+listHWDetail.get(0).getHw_st_date());
+        				System.out.println("HW Start Date "+listHWDetail.get(0).getHw_end_date());
+        				System.out.println("HW Scoring policy "+listHWDetail.get(0).getScore_policy());
+        				System.out.println("Total score based on the scoring policy"+total_score);
+        				System.out.println("HW Attempts allowed "+listHWDetail.get(0).getMax_no_of_tries());
+        				System.out.println("Your number of attempts "+studentAttemptCount);
+        				if(listAttempts.size()!=0) {
+        					for(int i=0; i<=listAttempts.size()-1 ;i++) {
+        						System.out.println("\n******** DISPLAY DETAILS FOR THIS ATTEMPT: ************"+listAttempts.get(i).getAttempt_id());
+        						System.out.println("Question id:  "+listAttempts.get(i).getQues_id());
+        						System.out.println("Question Text:  "+listAttempts.get(i).getQues_text());
+        						System.out.println("Answer you chose: "+listAttempts.get(i).getAns_id());
+        						System.out.println("Answer Value: "+listAttempts.get(i).getValue_id());
+        						System.out.println("Score that question: "+listAttempts.get(i).getScore_per_ques());
+        						if(listAttempts.get(i).getScore_per_ques()<=0) {
+        							System.out.println("Your answer is : INCORRECT");	
+        						}else {
+        							System.out.println("Your answer is : CORRECT");	
+        						}
+        					}
+        				}
+        			}
+        			else {
+        				// Exit
+        				studentHomePage(currStudent, scanner);
+        			}
+        			
+    			}
+    			else {
+    				System.out.println("\nNo open Homeworks right now! \n\n Press 0 to exit!");
+    				choice = scanner.nextInt();
+    				while(choice!=0){
+        				System.out.println("\n\nInvalid choice! Press 0 to exit!\n");
+        				choice = scanner.nextInt();
+        			}
+    			}
+    			if(choice==0){
+    				studentHomePage(currStudent, scanner);
+    			}
         	
         }else if (HWChoice==2) {
         	List<HomeWork> listHW =StudentProcessor.getPastHW(courseId);
@@ -256,5 +342,43 @@ public class StudentAccount {
     		HWChoice = scanner.nextInt();
         }
 		
+	}
+
+	private static void takeTest(int a_id, String hw_id, String user_id, String courseId, String q_id, Scanner scanner, Student currStudent) {
+	
+	Random rand = new Random(); 
+	// Retrieve ques_text and value_id from Attempts_info and 4 answer IDs and 4 answer texts based on q_id and value_id from ANSWER
+	Attempts_info attlist = StudentProcessor.retreiveQuesDetails(a_id,hw_id,user_id,courseId,q_id);
+	String ques_text = attlist.getQues_text();
+	int val_id = attlist.getValue_id();
+	
+	List<Answer> listofAns = StudentProcessor.retreiveAnswers(q_id,val_id);
+	
+	// Print question and answers
+	int listSize = listofAns.size();
+	int min = 1;
+	int numAnswers = rand.nextInt((listSize - min) + 1) + min;
+	System.out.println("QUESTION "+q_id);
+	System.out.println("\n\n"+ques_text);
+	for(int i=0;i<numAnswers;i++){
+		System.out.println((i+1)+". "+listofAns.get(i).getAns_explanation());
+	}
+	// Get user's answer
+	// Call stored procedure update_ans()
+	String userChoice = scanner.next();
+	StudentProcessor.updateAnswers(a_id,courseId,hw_id,user_id,q_id,userChoice);
+	
+	// Call stored procedure retreiveQues()
+	// If ques_id returned == 0, then exit. Else, recursively call takeTest()
+	q_id = StudentProcessor.retrieveQuestion(a_id,hw_id,user_id,courseId);
+	System.out.println(q_id);
+	
+	if(!q_id.equals("0")){
+		takeTest(a_id,hw_id,user_id,courseId,q_id,scanner,currStudent);
+	} else {
+		System.out.println("You have completed this Attempt!");
+		studentHomePage(currStudent, scanner);
+	}
+	
 	}
 }
