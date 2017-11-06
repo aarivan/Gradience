@@ -45,5 +45,14 @@ public class DBFieldConstants {
 	// HW_QUESTIONS
 	public static final String HWID = "HW_ID";
 	public static final String QUESTIONID = "QUES_ID";
+	
+	//REPORT
+	public static final String REPORT_FNAME = "FIRST_NAME";
+	public static final String REPORT_LNAME = "LAST_NAME";
+	public static final String REPORT_SID = "STUDENT_ID";
+	public static final String REPORT_HW_ID = "HW_ID";
+	public static final String REPORT_COURSE_ID = "COURSE_ID";
+	public static final String REPORT_TOTAL_SCORE = "TOTAL_SCORE";
+	public static final String REPORT_ATTEMPT_ID = "ATTEMPT_ID";
 
 }

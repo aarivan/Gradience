@@ -8,6 +8,7 @@ import java.util.Scanner;
 
 import org.apache.log4j.Logger;
 import org.csc540.helper.DBFieldConstants;
+import org.csc540.pojo.Attempts;
 import org.csc540.pojo.HomeWork;
 import org.csc540.pojo.Student;
 import org.csc540.processor.ProfessorProcessor;
@@ -225,13 +226,29 @@ public class StudentAccount {
 			List<HomeWork> listHWDetail = ProfessorProcessor.getHWExcerciseDetails(hw_id);
 			int total_score = StudentProcessor.getTotalscoreFromScoringPolicy(hw_id,user_id);
 			int studentAttemptCount = StudentProcessor.getCountStudentAttempt(hw_id,user_id);
-			System.out.println("***********Details for your HW: ********"+listHWDetail.get(0).getHw_id() +"HW NAME: "+listHWDetail.get(0).getHW_name());
+			List<Attempts> listAttempts = StudentProcessor.getCompleteAttemptsdetails(hw_id,user_id);
+			System.out.println("\n***********Details for your HW: ********"+listHWDetail.get(0).getHw_id() +"HW NAME: "+listHWDetail.get(0).getHW_name());
 			System.out.println("HW Start Date "+listHWDetail.get(0).getHw_st_date());
 			System.out.println("HW Start Date "+listHWDetail.get(0).getHw_end_date());
 			System.out.println("HW Scoring policy "+listHWDetail.get(0).getScore_policy());
 			System.out.println("Total score based on the scoring policy"+total_score);
 			System.out.println("HW Attempts allowed "+listHWDetail.get(0).getMax_no_of_tries());
 			System.out.println("Your number of attempts "+studentAttemptCount);
+			if(listAttempts.size()!=0) {
+				for(int i=0; i<=listAttempts.size()-1 ;i++) {
+					System.out.println("\n******** DISPLAY DETAILS FOR THIS ATTEMPT: ************"+listAttempts.get(i).getAttempt_id());
+					System.out.println("Question id:  "+listAttempts.get(i).getQues_id());
+					System.out.println("Question Text:  "+listAttempts.get(i).getQues_text());
+					System.out.println("Answer you chose: "+listAttempts.get(i).getAns_id());
+					System.out.println("Answer Value: "+listAttempts.get(i).getValue_id());
+					System.out.println("Score that question: "+listAttempts.get(i).getScore_per_ques());
+					if(listAttempts.get(i).getScore_per_ques()<=0) {
+						System.out.println("Your answer is : INCORRECT");	
+					}else {
+						System.out.println("Your answer is : CORRECT");	
+					}
+				}
+			}
         	
         }else if(HWChoice!=1 || HWChoice!=2) {
         	System.out.println("##########Invalid Choice########");

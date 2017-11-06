@@ -19,6 +19,7 @@ import org.csc540.pojo.CourseTopicMapping;
 import org.csc540.pojo.HomeWork;
 import org.csc540.pojo.HwQuestion;
 import org.csc540.pojo.Professor;
+import org.csc540.pojo.Report;
 import org.csc540.pojo.Topic;
 import org.csc540.pojo.Users;
 import org.csc540.session.Session;
@@ -529,6 +530,52 @@ public class ProfessorProcessor {
 			LOG.error("Exception while converting the Result Set to HwQuestion POJO", e);
 		}
 		return result;
+	}
+	
+	private static List<Report> convertResultReportPOJO(ResultSet set) {
+		LOG.info("Converting ResultSet to Report POJO...");
+		List<Report> result = null;
+		try {
+			result = new ArrayList<Report>();
+			while (set.next()) {
+				Report temp = new Report();
+				String first_name = set.getString(DBFieldConstants.REPORT_FNAME);
+				temp.setFirst_name(first_name);;
+				String last_name = set.getString(DBFieldConstants.REPORT_LNAME);
+				temp.setLast_name(last_name);
+				String s_id = set.getString(DBFieldConstants.REPORT_SID);
+				temp.setStud_id(s_id);
+				String hw_id = set.getString(DBFieldConstants.REPORT_HW_ID);
+				temp.setHw_id(hw_id);
+				String course_id = set.getString(DBFieldConstants.REPORT_COURSE_ID);
+				temp.setCourse_id(course_id);
+				String attempt_id = set.getString(DBFieldConstants.REPORT_ATTEMPT_ID);
+				temp.setAttempt_id(attempt_id);
+				String total_score = set.getString(DBFieldConstants.REPORT_TOTAL_SCORE);
+				temp.setCourse_id(course_id);
+				result.add(temp);
+			}
+		} catch (Exception e) {
+			LOG.error("Exception while converting the Result Set to Report POJO", e);
+		}
+		return result;
+		
+	}
+	public static List<Report> viewReport(String courseId) {
+		List<Report> reportlist = null;
+		try {
+			Connection conn = Session.getConnection();
+			String getReport = "select * from Stud_Reports where course_id = '"+ courseId +"'";
+			PreparedStatement ps = conn.prepareStatement(getReport);
+			ResultSet Studreport_result = ps.executeQuery();
+			reportlist = ProfessorProcessor.convertResultReportPOJO(Studreport_result);
+			return reportlist;
+			
+		} catch (Exception e) {
+			LOG.error("Exception while processing  view Report ", e);
+		}
+		return null;
+		
 	}
 
 

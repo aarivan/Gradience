@@ -14,6 +14,7 @@ import org.csc540.pojo.CourseEnrollment;
 import org.csc540.pojo.HomeWork;
 import org.csc540.pojo.HwQuestion;
 import org.csc540.pojo.Professor;
+import org.csc540.pojo.Report;
 import org.csc540.pojo.Topic;
 import org.csc540.processor.ProfessorProcessor;
 import org.csc540.processor.StudentProcessor;
@@ -283,8 +284,56 @@ public class ProfessorAccount {
 				}
 			case 6:
 				// VIEW REPORT
-				
-				break;
+				profCourseList = ProfessorProcessor.getCourses(professorUser.getUserId());
+				System.out.println("\n\n");
+				System.out.println("----------------------------");
+				System.out.println("List of your Courses as Instructor:");
+				System.out.println("----------------------------");
+
+				i = 0;
+				while (i < profCourseList.size()) {
+					System.out.println((i + 1) + ". " + profCourseList.get(i).getCourseId());
+					i++;
+				}
+
+				System.out.println("Please enter Course ID for which you would like to view report:\n\n");
+				System.out.println("### Press 0 to Go Back ###\n\n");
+				courseId = scanner.next();
+				if(courseId == "0") {
+					break;
+				}
+				else {
+					i = 0;
+					boolean course_found = false;
+					while (i < profCourseList.size()) {
+						if (profCourseList.get(i).getCourseId().equalsIgnoreCase(courseId)) {
+						List<Report> report_details =  ProfessorProcessor.viewReport(profCourseList.get(i).getCourseId());
+							course_found = true;
+							int j = 0;
+							System.out.println("\nList of Reports:\n");
+							while (j < report_details.size()) {
+								System.out.println((j + 1) + " Student ID: " + report_details.get(j).getStud_id() + " First Name: " + report_details.get(j).getFirst_name() + " Last Name: " + report_details.get(j).getLast_name()
+								+ " Course ID: " + report_details.get(j).getCourse_id() + " Homework ID: " + report_details.get(j).getHw_id() + " Attempt ID: " + report_details.get(j).getAttempt_id() + " Total Score: " + report_details.get(j).getTotal_score());
+								j++;
+						}
+						i++;
+					}
+					if (!course_found) {
+						System.out.println("Invalid Course Id Entered..");
+						break;
+					}
+					else {
+						System.out.println("\n\n### Press 0 to Go Back ###\n\n");
+						newChoice = scanner.nextInt();
+						while (newChoice != 0) {
+							System.out.println("\nInvalid choice!! Please enter 0 to go back to previous page!!\n\n");
+							newChoice = scanner.nextInt();
+						}
+						break;
+					}
+					}
+				}		
+						break;
 			case 7:
 				// SETUP TA
 				profCourseList = ProfessorProcessor.getCourses(professorUser.getUserId());
