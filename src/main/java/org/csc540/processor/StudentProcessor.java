@@ -13,6 +13,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import org.apache.log4j.Logger;
 import org.csc540.helper.DBFieldConstants;
+import org.csc540.pojo.Attempts;
 import org.csc540.pojo.HomeWork;
 import org.csc540.pojo.Student;
 import org.csc540.session.Session;
@@ -282,7 +283,59 @@ public class StudentProcessor {
 		}
 		return 0;
 		}
-		
 	
+	public static List<Attempts> getCompleteAttemptsdetails(String hw_id, String user_id) {
+		try {
+			Connection conn = Session.getConnection();
+			String getattempDetails = "select * from complete_attempts_details where hw_id='"+hw_id+"' and STUDENT_ID='"+user_id+"'";
+			PreparedStatement ps = conn.prepareStatement(getattempDetails);
+			ResultSet getattempDetails_result = ps.executeQuery();
+			List<Attempts> listAttempt = convertResultSetToAttemptPOJO(getattempDetails_result);
+			return listAttempt;
+			
+			
+			
+		} catch (Exception e) {
+			LOG.error("Exception while processing  open HW. viewHWForCourse", e);
+		}
+		return null;
+		}
+	
+
+	
+	public static List<Attempts> convertResultSetToAttemptPOJO(ResultSet set) {
+		List<Attempts> result = null;
+		try {
+			result = new ArrayList<Attempts>();
+			while (set.next()) {
+				Attempts temp = new Attempts();
+
+				String hw_id = set.getString("hw_id");
+				temp.setHw_id(hw_id);
+				String student_id = set.getString("student_id");
+				temp.setStudent_id(student_id);
+				int attempt_id = set.getInt("attempt_id");
+				temp.setAttempt_id(attempt_id);
+				String ques_id = set.getString("ques_id");
+				temp.setQues_id(ques_id);
+				int  value_id = set.getInt("value_id");
+				temp.setValue_id(value_id);
+				int  score_per_ques = set.getInt("score_per_ques");
+				temp.setScore_per_ques(score_per_ques);
+				String ques_text = set.getString("ques_text");
+				temp.setQues_text(ques_text);
+				String ans_id = set.getString("ans_id");
+				temp.setAns_id(ans_id);
+				int total_score = set.getInt("total_score");
+				temp.setTotal_score(total_score);
+				
+				result.add(temp);
+			}
+		} catch (Exception e) {
+			LOG.error("Exception while converting the Result Set to attempts pojo", e);
+		}
+		return result;
+		
+	}	
 
 }
