@@ -323,7 +323,6 @@ public class StudentProcessor {
 				temp.setAns_id(ans_id);
 				int total_score = set.getInt("total_score");
 				temp.setTotal_score(total_score);
-
 				result.add(temp);
 			}
 		} catch (Exception e) {
@@ -380,7 +379,8 @@ public class StudentProcessor {
 				temp.setAns_id(ans_id);
 				String course_id = set.getString("course_id");
 				temp.setCourse_id(course_id);
-
+				String q_EXPLN = set.getString("Q_EXPLN");
+				temp.setQ_EXPLN(q_EXPLN);
 				result.add(temp);
 			}
 		} catch (Exception e) {
