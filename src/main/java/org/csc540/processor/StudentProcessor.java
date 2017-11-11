@@ -223,15 +223,16 @@ public class StudentProcessor {
 		try {
 			Connection conn = Session.getConnection();
 			String getopenHW = "select * from open_HW_ForCourse where course_id='" + courseId + "'";
-			//String getopenHW = "SELECT * FROM homework WHERE hw_end_date > TRUNC(sysdate) AND course_id='" + courseId + "'";
+			// String getopenHW = "SELECT * FROM homework WHERE hw_end_date >
+			// TRUNC(sysdate) AND course_id='" + courseId + "'";
 			System.out.println(getopenHW);
 			PreparedStatement ps = conn.prepareStatement(getopenHW);
 			ResultSet getCoursesForStudent_result = ps.executeQuery();
-			
+
 			System.out.println(getCoursesForStudent_result.next());
-			
+
 			List<HomeWork> listHW = convertResultSetToHWPOJO(getCoursesForStudent_result);
-			System.out.println("HW NAME : "+listHW.get(0).getHW_name());
+			System.out.println("HW NAME : " + listHW.get(0).getHW_name());
 			return listHW;
 
 		} catch (Exception e) {
@@ -332,26 +333,26 @@ public class StudentProcessor {
 
 	}
 
-	public static Attempts_info getAttemptsInfo(String hw_id, String user_id, String courseId) {
-
+	public static int getAttemptsInfo(String hw_id, String user_id, String courseId) {
+		int a_id = 0;
 		try {
 			Connection conn = Session.getConnection();
 			String getAttempt = "select distinct(attempt_id) from incomplete_attempts where hw_id = '" + hw_id
 					+ "' AND course_id = '" + courseId + "' AND student_id = '" + user_id + "'";
-			System.out.println(getAttempt);
+
+			System.out.println("GETATTEMPT = " + getAttempt);
+
 			PreparedStatement ps = conn.prepareStatement(getAttempt);
-			ResultSet getAttempt_result = ps.executeQuery();
-			List<Attempts_info> attempts_info_list = convertResultSetToAttemptInfoPOJO(getAttempt_result);
-			Attempts_info attempt_info = null;
-			if (attempts_info_list.size() == 1) {
-				attempt_info = attempts_info_list.get(0);
-				return attempt_info;
+			ResultSet set = ps.executeQuery();
+			System.out.println("Get attempt executed!");
+			while (set.next()) {
+				a_id = set.getInt(1);
+				System.out.println(a_id);
 			}
 		} catch (Exception e) {
 			LOG.error("Exception while processing courses for students.getCoursesOfStudent", e);
 		}
-
-		return null;
+		return a_id;
 	}
 
 	private static List<Attempts_info> convertResultSetToAttemptInfoPOJO(ResultSet set) {
@@ -389,68 +390,70 @@ public class StudentProcessor {
 	}
 
 	public static String retrieveQuestion(int a_id, String hw_id, String user_id, String courseId) {
-		
+
+		String q_id = "0";
 		try {
 			Connection conn = Session.getConnection();
-			CallableStatement callableStatement = null;
-			String retrieve_ques = "{call retrieve_a_ques(?,?,?,?,?)}";
-			callableStatement = conn.prepareCall(retrieve_ques);
-
-			callableStatement.setInt(1, a_id);
-			callableStatement.setString(2, hw_id);
-			callableStatement.setString(3, user_id);
-			callableStatement.setString(4, courseId);
-			callableStatement.registerOutParameter(5, java.sql.Types.VARCHAR);
-			
-
-			// execute stored procedure
-			callableStatement.executeUpdate();
-
-			String question_id = callableStatement.getString(5);
-			
-			System.out.println(question_id);
-			
-			return question_id;
-
+			String retrieve_ques = "INSERT INTO temp_retrieve_ques (attempt_id,course_id,hw_id,student_id,q_id) VALUES ('"
+					+ a_id + "','" + courseId + "','" + hw_id + "','" + user_id + "','" + q_id + "')";
+			PreparedStatement ps = conn.prepareStatement(retrieve_ques);
+			ps.execute();
+			System.out.println("QUERY SUCCESSFUL!");
+			String retrieve_ques_id = "SELECT q_id FROM temp_retrieve_ques WHERE course_id = '" + courseId
+					+ "' AND hw_id = '" + hw_id + "'AND student_id = '" + user_id + "'AND attempt_id = '" + a_id + "'";
+			Connection conn1 = Session.getConnection();
+			PreparedStatement ps1 = conn1.prepareStatement(retrieve_ques_id);
+			ResultSet set = ps1.executeQuery();
+			while (set.next()) {
+				q_id = set.getString(1);
+				System.out.println(q_id);
+			}
+			Connection conn2 = Session.getConnection();
+			String delete_temp = "TRUNCATE table temp_retrieve_ques";
+			PreparedStatement ps2 = conn2.prepareStatement(delete_temp);
+			ps2.execute();
 		} catch (Exception e) {
-			LOG.error("Exception while processing retrieveQuestion..", e);
+			System.out.println(e);
 		}
-		return null;
+		return q_id;
 	}
 
 	public static int addAttempt(String hw_id, String user_id, String courseId) {
+		int a_id = 0;
 		try {
 			Connection conn = Session.getConnection();
-			CallableStatement callableStatement = null;
-			String retrieve_ques = "{call add_attempt(?,?,?,?)}";
-			callableStatement = conn.prepareCall(retrieve_ques);
-
-			callableStatement.setString(1, hw_id);
-			callableStatement.setString(2, user_id);
-			callableStatement.setString(3, courseId);
-			callableStatement.registerOutParameter(4, java.sql.Types.INTEGER);
-			
-			// execute stored procedure
-			callableStatement.executeUpdate();
-
-			int a_id = callableStatement.getInt(5);
-			
-			System.out.println(a_id);
-			
-			return a_id;
-
+			String add_attempt = "INSERT INTO temp_add_attempts (attempt_id,course_id,hw_id,student_id) VALUES ('"
+					+ a_id + "','" + courseId + "','" + hw_id + "','" + user_id + "')";
+			PreparedStatement ps = conn.prepareStatement(add_attempt);
+			ps.execute();
+			System.out.println("QUERY SUCCESSFUL!");
+			String retrieve_attempt = "SELECT attempt_id FROM temp_add_attempts WHERE course_id = '" + courseId
+					+ "' AND hw_id = '" + hw_id + "'AND student_id = '" + user_id + "'";
+			Connection conn1 = Session.getConnection();
+			PreparedStatement ps1 = conn1.prepareStatement(retrieve_attempt);
+			ResultSet set = ps1.executeQuery();
+			while (set.next()) {
+				a_id = set.getInt(1);
+				System.out.println(a_id);
+			}
+			Connection conn2 = Session.getConnection();
+			String delete_temp = "TRUNCATE table temp_add_attempts";
+			PreparedStatement ps2 = conn2.prepareStatement(delete_temp);
+			ps2.execute();
 		} catch (Exception e) {
-			LOG.error("Exception while processing retrieveQuestion..", e);
+			System.out.println(e);
 		}
-		return -1;
+		return a_id;
 	}
 
 	public static Attempts_info retreiveQuesDetails(int a_id, String hw_id, String user_id, String courseId,
 			String q_id) {
 		try {
+
 			Connection conn = Session.getConnection();
-			String getAttempt = "select * from ATTEMPTS_INFO where hw_id = '" + hw_id
-					+ "' AND course_id = '" + courseId + "' AND student_id = '" + user_id + "' AND attempt_id = '"+ a_id + "' AND ques_id = '"+q_id+"'";
+			String getAttempt = "select * from ATTEMPTS_INFO where hw_id = '" + hw_id + "' AND course_id = '" + courseId
+					+ "' AND student_id = '" + user_id + "' AND attempt_id = '" + a_id + "' AND ques_id = '" + q_id
+					+ "'";
 
 			PreparedStatement ps = conn.prepareStatement(getAttempt);
 			ResultSet getAttempt_result = ps.executeQuery();
@@ -470,13 +473,12 @@ public class StudentProcessor {
 	public static List<Answer> retreiveAnswers(String q_id, int val_id) {
 		try {
 			Connection conn = Session.getConnection();
-			String getAttempt = "select * from ANSWER where q_id = '" + q_id
-					+ "' AND value_id = '" + val_id + "'";
+			String getAttempt = "select * from ANSWER where q_id = '" + q_id + "' AND value_id = '" + val_id + "'";
 
 			PreparedStatement ps = conn.prepareStatement(getAttempt);
 			ResultSet getAnswers = ps.executeQuery();
 			List<Answer> ans_list = convertResultSetToAnswerPOJO(getAnswers);
-			
+
 			return ans_list;
 
 		} catch (Exception e) {
@@ -487,7 +489,7 @@ public class StudentProcessor {
 	}
 
 	private static List<Answer> convertResultSetToAnswerPOJO(ResultSet set) {
-		
+
 		List<Answer> result = null;
 		try {
 			result = new ArrayList<Answer>();
@@ -517,27 +519,18 @@ public class StudentProcessor {
 			String userChoice) {
 		try {
 			Connection conn = Session.getConnection();
-			CallableStatement callableStatement = null;
-			String update_ans = "{call update_ans(?,?,?,?)}";
-			callableStatement = conn.prepareCall(update_ans);
-
-			callableStatement.setInt(1, a_id);
-			callableStatement.setString(2, courseId);
-			callableStatement.setString(3, hw_id);
-			callableStatement.setString(4, user_id);
-			callableStatement.setString(5, q_id);
-			callableStatement.setString(6, userChoice);
-			
-			// execute stored procedure
-			callableStatement.executeUpdate();
-
-
+			String update_ans = "INSERT INTO temp_update_ans (attempt_id,course_id,hw_id,student_id,q_id,a_id) VALUES ('"
+					+ a_id + "','" + courseId + "','" + hw_id + "','" + user_id + "','" + q_id + "','" + userChoice
+					+ "')";
+			PreparedStatement ps = conn.prepareStatement(update_ans);
+			ps.execute();
+			System.out.println("QUERY SUCCESSFUL!");
+			Connection conn2 = Session.getConnection();
+			String delete_temp = "TRUNCATE table temp_update_ans";
+			PreparedStatement ps2 = conn2.prepareStatement(delete_temp);
+			ps2.execute();
 		} catch (Exception e) {
-			LOG.error("Exception while processing retrieveQuestion..", e);
+			System.out.println(e);
 		}
-	
 	}
-
-
-
 }
