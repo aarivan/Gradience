@@ -16,6 +16,7 @@ import org.csc540.helper.DBFieldConstants;
 import org.csc540.pojo.Answer;
 import org.csc540.pojo.Attempts;
 import org.csc540.pojo.Attempts_info;
+import org.csc540.pojo.CompletedAttempts;
 import org.csc540.pojo.HomeWork;
 import org.csc540.pojo.Student;
 import org.csc540.session.Session;
@@ -379,8 +380,6 @@ public class StudentProcessor {
 				temp.setAns_id(ans_id);
 				String course_id = set.getString("course_id");
 				temp.setCourse_id(course_id);
-				String q_EXPLN = set.getString("Q_EXPLN");
-				temp.setQ_EXPLN(q_EXPLN);
 				result.add(temp);
 			}
 		} catch (Exception e) {
@@ -532,5 +531,92 @@ public class StudentProcessor {
 		} catch (Exception e) {
 			System.out.println(e);
 		}
+	}
+
+	public static List<Integer> getCompleteAttemptIDs(String courseId, String user_id, String hw_id) {
+		try {
+			Connection conn = Session.getConnection();
+			String getCompletedAttemptIDs = "select * from complete_attempts where course_id = '" + courseId + "' AND student_id = '" + user_id + "' AND hw_id = '" + hw_id + "'";
+
+			PreparedStatement ps = conn.prepareStatement(getCompletedAttemptIDs);
+			ResultSet getCompletedAttemptID = ps.executeQuery();
+			List<Integer> attempt_id_list = convertResultSetToIntegerPOJO(getCompletedAttemptID);
+
+			return attempt_id_list;
+
+		} catch (Exception e) {
+			LOG.error("Exception while processing courses for students.getCoursesOfStudent", e);
+		}
+
+		return null;
+	}
+
+	public static List<Integer> convertResultSetToIntegerPOJO(ResultSet set) {
+		List<Integer> result = null;
+		try {
+			result = new ArrayList<Integer>();
+			while (set.next()) {
+				int attempt_id = set.getInt("attempt_id");
+				result.add(attempt_id);
+			}
+		} catch (Exception e) {
+			LOG.error("Exception while converting the Result Set to Integer pojo", e);
+		}
+		return result;
+	}
+
+	public static List<CompletedAttempts> getCompletedAttempts(int attempt_choice, String courseId, String hw_id,
+			String user_id) {
+		try {
+			Connection conn = Session.getConnection();
+			String getCompletedAttemptDetails = "select * from complete_attempts_report where attempt_id = '"+attempt_choice+"' AND course_id = '" + courseId + "' AND student_id = '" + user_id + "' AND hw_id = '" + hw_id + "'";
+
+			PreparedStatement ps = conn.prepareStatement(getCompletedAttemptDetails);
+			ResultSet getCompletedAttempts = ps.executeQuery();
+			List<CompletedAttempts> attempt_details = convertResultSetToCompletedAttemptsPOJO(getCompletedAttempts);
+
+			return attempt_details;
+
+		} catch (Exception e) {
+			LOG.error("Exception in get Completed Attempts", e);
+		}
+
+		return null;
+	}
+
+	private static List<CompletedAttempts> convertResultSetToCompletedAttemptsPOJO(ResultSet set) {
+		List<CompletedAttempts> result = null;
+		try {
+			result = new ArrayList<CompletedAttempts>();
+			while (set.next()) {
+				CompletedAttempts temp = new CompletedAttempts();
+				int attempt_id = set.getInt("attempt_id");
+				temp.setAttempt_id(attempt_id);
+				String course_id = set.getString("course_id");
+				temp.setCourse_id(course_id);
+				String hw_id = set.getString("hw_id");
+				temp.setHw_id(hw_id);
+				String student_id = set.getString("student_id");
+				temp.setStudent_id(student_id);
+				String ques_id = set.getString("ques_id");
+				temp.setQues_id(ques_id);
+				String ques_text = set.getString("ques_text");
+				temp.setQues_text(ques_text);
+				String ans_id = set.getString("ans_id");
+				temp.setAns_id(ans_id);
+				String hint = set.getString("hint");
+				temp.setHint(hint);
+				String a_expln = set.getString("a_expln");
+				temp.setA_expln(a_expln);
+				int score_per_ques = set.getInt("score_per_ques");
+				temp.setScore_per_ques(score_per_ques);
+				int total_score = set.getInt("total_score");
+				temp.setTotal_score(total_score);
+				result.add(temp);
+			}
+		} catch (Exception e) {
+			LOG.error("Exception while converting the Result Set to Completed Attempts pojo", e);
+		}
+		return result;
 	}
 }
