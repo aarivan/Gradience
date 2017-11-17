@@ -145,7 +145,6 @@ public class StudentProcessor {
 	}
 
 	public static List<HomeWork> convertResultSetToHWPOJO(ResultSet set) {
-		LOG.info("Converting ResultSet to HW POJO...");
 		List<HomeWork> result = null;
 		try {
 			result = new ArrayList<HomeWork>();
@@ -267,14 +266,13 @@ public class StudentProcessor {
 		int result = 0;
 		try {
 			Connection conn = Session.getConnection();
-			String getAttemptCount = "select count(*) from attempts where hw_id='" + hw_id + "' and student_id='"
+			String getAttemptCount = "select count(*) as count from attempts where hw_id='" + hw_id + "' and student_id='"
 					+ user_id + "'";
 			PreparedStatement ps = conn.prepareStatement(getAttemptCount);
 			ResultSet set = ps.executeQuery();
 			while (set.next()) {
-				result = set.getInt(1);
+				result = set.getInt("count");
 			}
-			// int result = ps.getInt(1);
 			return result;
 
 		} catch (Exception e) {
