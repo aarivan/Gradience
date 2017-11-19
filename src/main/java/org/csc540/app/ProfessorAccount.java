@@ -674,13 +674,7 @@ public class ProfessorAccount {
 		System.out.println("    Course Level:" + courseDetails.getCourseLevel());
 		System.out.println("    Number of Students Enrolled:" + courseDetails.getStudentsEnrollement());
 		System.out.println("    Maximum students allowed:" + courseDetails.getMaxEnrollment());
-		System.out.println("1.  View/Add Exercise");
-		System.out.println("2.  View/Add TA");
-		System.out.println("3.  Enroll/Drop a Student ");
-		System.out.println("4.  View Report");
 
-		System.out.println("Please enter the your choice for function to perform based on the above menu:");
-		String choice = scanner.next();
 	}
 	public static void viewHWExercise( Course course, Scanner scanner) throws ParseException {
 		// TODO Auto-generated method stub
@@ -699,7 +693,7 @@ public class ProfessorAccount {
 		
 		String HWId = scanner.next();
 		
-		List<HomeWork> listHWDetails = ProfessorProcessor.getHWExcerciseDetails(HWId);
+		List<HomeWork> listHWDetails = ProfessorProcessor.getHWExcerciseDetails(HWId,course.getCourseId());
 			i = 0;
 			boolean HW_found = false;
 			while (i < listHWDetails.size()) {
@@ -736,7 +730,7 @@ public class ProfessorAccount {
 		
 		String HWId = scanner.next();
 		
-		List<HomeWork> listHWDetails = ProfessorProcessor.getHWExcerciseDetails(HWId);
+		List<HomeWork> listHWDetails = ProfessorProcessor.getHWExcerciseDetails(HWId,course.getCourseId());
 			i = 0;
 			boolean HW_found = false;
 			while (i < listHWDetails.size()) {

@@ -8,6 +8,7 @@ public class CompletedAttempts {
 	String ques_id;
 	String ques_text;
 	String ans_id;
+	String q_expln;
 	String hint;
 	String a_expln;
 	int score_per_ques;
@@ -53,6 +54,12 @@ public class CompletedAttempts {
 	}
 	public void setAns_id(String ans_id) {
 		this.ans_id = ans_id;
+	}
+	public String getQ_expln() {
+		return q_expln;
+	}
+	public void setQ_expln(String q_expln) {
+		this.q_expln = q_expln;
 	}
 	public String getHint() {
 		return hint;

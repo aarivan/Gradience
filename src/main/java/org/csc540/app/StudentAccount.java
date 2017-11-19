@@ -264,53 +264,58 @@ public class StudentAccount {
 
 				} else if (new_choice == 1) {
 					// Get completed attempts
-					List<Integer> complete_attempt_id = StudentProcessor.getCompleteAttemptIDs(courseId,user_id,hw_id);
+					List<Integer> complete_attempt_id = StudentProcessor.getCompleteAttemptIDs(courseId, user_id,
+							hw_id);
 					if (complete_attempt_id != null) {
 						System.out.println("\n\n###### Your Completed Attempts #######\n");
 						for (int i = 0; i < complete_attempt_id.size(); i++) {
-							System.out.println((i+1)+". Attempt ID: " + complete_attempt_id.get(i));
+							System.out.println((i + 1) + ". Attempt ID: " + complete_attempt_id.get(i));
 						}
 						// User chooses a completed attempt to view report
 						System.out.println("\n\nChoose an attempt ID to see the attempt .. \n");
 						int attempt_choice = scanner.nextInt();
-						if(attempt_choice <= complete_attempt_id.size()){
+						if (attempt_choice <= complete_attempt_id.size()) {
 							// Valid Attempt ID
-							List <CompletedAttempts> completedAttempts = StudentProcessor.getCompletedAttempts(attempt_choice,courseId,hw_id,user_id);
-							if(completedAttempts != null) {
+							List<CompletedAttempts> completedAttempts = StudentProcessor
+									.getCompletedAttempts(attempt_choice, courseId, hw_id, user_id);
+							if (completedAttempts != null) {
 								System.out.println("************************************************");
-								System.out.println("\nAttempt ID: "+completedAttempts.get(0).getAttempt_id());
-								System.out.println("HW ID: "+ completedAttempts.get(0).getHw_id());
-								System.out.println("Course ID: "+ completedAttempts.get(0).getCourse_id());
-								System.out.println("\nTotal score: "+ completedAttempts.get(0).getTotal_score()+"\n");
-								for(int i=0; i<completedAttempts.size();i++) {
+								System.out.println("\nAttempt ID: " + completedAttempts.get(0).getAttempt_id());
+								System.out.println("HW ID: " + completedAttempts.get(0).getHw_id());
+								System.out.println("Course ID: " + completedAttempts.get(0).getCourse_id());
+								System.out
+										.println("\nTotal score: " + completedAttempts.get(0).getTotal_score() + "\n");
+								for (int i = 0; i < completedAttempts.size(); i++) {
 									System.out.println("\n************************************************");
-									System.out.println("Question ID: "+ completedAttempts.get(i).getQues_id());
-									System.out.println("Question Text: "+ completedAttempts.get(i).getQues_text());
-									System.out.println("Your Answer (ID): "+ completedAttempts.get(i).getAns_id());
-									System.out.println("Your Answer (Text Description): "+ completedAttempts.get(i).getA_expln());
-									if(completedAttempts.get(i).getScore_per_ques() <= 0) {
-										System.out.println("\n Your answer is : INCORRECT");	
-									}else {
-										System.out.println("\n Your answer is : CORRECT");	
+									System.out.println("Question ID: " + completedAttempts.get(i).getQues_id());
+									System.out.println("Question Text: " + completedAttempts.get(i).getQues_text());
+									System.out.println("Your Answer (ID): " + completedAttempts.get(i).getAns_id());
+									System.out.println(
+											"Your Answer (Text Description): " + completedAttempts.get(i).getA_expln());
+									if (completedAttempts.get(i).getScore_per_ques() <= 0) {
+										System.out.println("\n Your answer is : INCORRECT");
+									} else {
+										System.out.println("\n Your answer is : CORRECT");
 									}
-									System.out.println("\nYour Score for this Question: "+ completedAttempts.get(i).getScore_per_ques());
-									System.out.println("Hint : "+ completedAttempts.get(i).getHint());
+									System.out.println("\nYour Score for this Question: "
+											+ completedAttempts.get(i).getScore_per_ques());
+									System.out.println("Hint : " + completedAttempts.get(i).getHint());
 								}
 								System.out.println("************************************************");
 								System.out.println("\n\n Redirecting you to Homepage.. \n\n");
 								studentHomePage(currStudent, scanner);
 							} else {
-								System.out.println("There are no details available for this Attempt! ...\n Redirecting you to Homepage.. \n\n ");
+								System.out.println(
+										"There are no details available for this Attempt! ...\n Redirecting you to Homepage.. \n\n ");
 								studentHomePage(currStudent, scanner);
-							}							
-						}
-						else {
+							}
+						} else {
 							// Invalid Attempt ID
-							System.out.println("\n\nInvalid attempt ID !! Please try again .. \n Redirecting you to Homepage.. \n\n");
+							System.out.println(
+									"\n\nInvalid attempt ID !! Please try again .. \n Redirecting you to Homepage.. \n\n");
 							studentHomePage(currStudent, scanner);
 						}
-					}
-					else {
+					} else {
 						System.out.println("You have no completed attempts..\n Redirecting you to Homepage.. \n\n");
 						studentHomePage(currStudent, scanner);
 					}
@@ -334,83 +339,110 @@ public class StudentAccount {
 
 		} else if (HWChoice == 2) {
 			List<HomeWork> listHW = StudentProcessor.getPastHW(courseId);
+			List<String> listValidHWIds = null;
 			System.out.println("###### Past HWs #######");
-			if(listHW.size()!=0) {
+			if (listHW.size() != 0) {
 				for (int i = 0; i < listHW.size(); i++) {
-					System.out.println("HW ID: " + listHW.get(i).getHw_id() + " HW Name: " + listHW.get(i).getHW_name());
+					System.out
+							.println("HW ID: " + listHW.get(i).getHw_id() + " HW Name: " + listHW.get(i).getHW_name());
+//					listValidHWIds.add(i, element);
 				}
 				System.out.println("Enter the HW ID to view that HW: ");
 				String hw_id = scanner.next();
-
-				List<HomeWork> listHWDetail = ProfessorProcessor.getHWExcerciseDetails(hw_id);
-				int total_score = StudentProcessor.getTotalscoreFromScoringPolicy(hw_id,user_id);
-				int studentAttemptCount = StudentProcessor.getCountStudentAttempt(hw_id,user_id);
-				List<Attempts> listAttempts = StudentProcessor.getCompleteAttemptsdetails(hw_id,user_id);
-				System.out.println("\n***********Details for your HW: ********"+listHWDetail.get(0).getHw_id() +"HW NAME: "+listHWDetail.get(0).getHW_name());
-				System.out.println("HW Start Date "+listHWDetail.get(0).getHw_st_date());
-				System.out.println("HW Start Date "+listHWDetail.get(0).getHw_end_date());
-				System.out.println("HW Scoring policy "+listHWDetail.get(0).getScore_policy());
-				System.out.println("Total score based on the scoring policy"+total_score);
-				System.out.println("HW Attempts allowed "+listHWDetail.get(0).getMax_no_of_tries());
-				System.out.println("Your number of attempts "+studentAttemptCount);
-				// Get completed attempts
-				List<Integer> complete_attempt_id = StudentProcessor.getCompleteAttemptIDs(courseId,user_id,hw_id);
-				if (complete_attempt_id !=null) {
-					System.out.println("\n\n###### Your Completed Attempts #######\n");
-					for (int i = 0; i < complete_attempt_id.size(); i++) {
-						System.out.println((i+1)+". Attempt ID: " + complete_attempt_id.get(i));
+				Boolean flag = false;
+				for (int i = 0; i < listHW.size(); i++) {
+					if(hw_id.equals(listHW.get(i).getHw_id())) {
+						flag = true;
 					}
-					// User chooses a completed attempt to view report
-					System.out.println("\n\nChoose an attempt ID to see the attempt .. \n");
-					int attempt_choice = scanner.nextInt();
-					if(attempt_choice <= complete_attempt_id.size()){
-						// Valid Attempt ID
-						List <CompletedAttempts> completedAttempts = StudentProcessor.getCompletedAttempts(attempt_choice,courseId,hw_id,user_id);
-						if(completedAttempts.size() != 0) {
-							System.out.println("************************************************");
-							System.out.println("\nAttempt ID: "+completedAttempts.get(0).getAttempt_id());
-							System.out.println("HW ID: "+ completedAttempts.get(0).getHw_id());
-							System.out.println("Course ID: "+ completedAttempts.get(0).getCourse_id());
-							System.out.println("\nTotal score: "+ completedAttempts.get(0).getTotal_score()+"\n");
-							for(int i=0; i<completedAttempts.size();i++) {
-								System.out.println("\n************************************************");
-								System.out.println("Question ID: "+ completedAttempts.get(i).getQues_id());
-								System.out.println("Question Text: "+ completedAttempts.get(i).getQues_text());
-								System.out.println("Your Answer (ID): "+ completedAttempts.get(i).getAns_id());
-								System.out.println("Your Answer (Text Description): "+ completedAttempts.get(i).getA_expln());
-								if(completedAttempts.get(i).getScore_per_ques() <= 0) {
-									System.out.println("\n Your answer is : INCORRECT");	
-								}else {
-									System.out.println("\n Your answer is : CORRECT");	
-								}
-								System.out.println("\nYour Score for this Question: "+ completedAttempts.get(i).getScore_per_ques());
-								System.out.println("Hint : "+ completedAttempts.get(i).getHint());
+				}
+				if(flag){
+					List<HomeWork> listHWDetail = StudentProcessor.getHWExcerciseDetails(hw_id, courseId);
+					if (listHWDetail != null) {
+						int total_score = StudentProcessor.getTotalscoreFromScoringPolicy(hw_id, user_id,courseId);
+						int studentAttemptCount = StudentProcessor.getCountStudentAttempt(hw_id, user_id,courseId);
+						// List<Attempts> listAttempts =
+						// StudentProcessor.getCompleteAttemptsdetails(hw_id,user_id);
+						System.out.println("\n***********Details for your HW: ********" + listHWDetail.get(0).getHw_id()
+								+ "HW NAME: " + listHWDetail.get(0).getHW_name());
+						System.out.println("HW Start Date " + listHWDetail.get(0).getHw_st_date());
+						System.out.println("HW Start Date " + listHWDetail.get(0).getHw_end_date());
+						System.out.println("HW Scoring policy " + listHWDetail.get(0).getScore_policy());
+						System.out.println("Total score based on the scoring policy" + total_score);
+						System.out.println("HW Attempts allowed " + listHWDetail.get(0).getMax_no_of_tries());
+						System.out.println("Your number of attempts " + studentAttemptCount);
+						// Get completed attempts
+						List<Integer> complete_attempt_id = StudentProcessor.getCompleteAttemptIDs(courseId, user_id,
+								hw_id);
+						if (complete_attempt_id != null) {
+							System.out.println("\n\n###### Your Completed Attempts #######\n");
+							for (int i = 0; i < complete_attempt_id.size(); i++) {
+								System.out.println((i + 1) + ". Attempt ID: " + complete_attempt_id.get(i));
 							}
-							System.out.println("************************************************");
-							System.out.println("\n\n Redirecting you to Homepage.. \n\n");
-							studentHomePage(currStudent, scanner);
+							// User chooses a completed attempt to view report
+							System.out.println("\n\nChoose an attempt ID to see the attempt .. \n");
+							int attempt_choice = scanner.nextInt();
+							if (attempt_choice <= complete_attempt_id.size()) {
+								// Valid Attempt ID
+								List<CompletedAttempts> completedAttempts = StudentProcessor
+										.getCompletedAttempts(attempt_choice, courseId, hw_id, user_id);
+								if (completedAttempts != null) {
+									System.out.println("************************************************");
+									System.out.println("\nAttempt ID: " + completedAttempts.get(0).getAttempt_id());
+									System.out.println("HW ID: " + completedAttempts.get(0).getHw_id());
+									System.out.println("Course ID: " + completedAttempts.get(0).getCourse_id());
+									System.out
+											.println("\nTotal score: " + completedAttempts.get(0).getTotal_score() + "\n");
+									for (int i = 0; i < completedAttempts.size(); i++) {
+										System.out.println("\n************************************************");
+										System.out.println("Question ID: " + completedAttempts.get(i).getQues_id());
+										System.out.println("Question Text: " + completedAttempts.get(i).getQues_text());
+										System.out.println("Your Answer (ID): " + completedAttempts.get(i).getAns_id());
+										System.out.println(
+												"Your Answer (Text Description): " + completedAttempts.get(i).getA_expln());
+										if (completedAttempts.get(i).getScore_per_ques() <= 0) {
+											System.out.println("\n Your answer is : INCORRECT");
+										} else {
+											System.out.println("\n Your answer is : CORRECT");
+										}
+										System.out.println("\nYour Score for this Question: "
+												+ completedAttempts.get(i).getScore_per_ques());
+										System.out.println("Detailed Explanation : " + completedAttempts.get(i).getQ_expln());
+									}
+									System.out.println("************************************************");
+									System.out.println("\n\n Redirecting you to Homepage.. \n\n");
+									studentHomePage(currStudent, scanner);
+								} else {
+									System.out.println(
+											"There are no details available for this Attempt! ...\n Redirecting you to Homepage.. \n\n ");
+									studentHomePage(currStudent, scanner);
+								}
+							} else {
+								// Invalid Attempt ID
+								System.out.println(
+										"\n\nInvalid attempt ID !! Please try again .. \n Redirecting you to Homepage.. \n\n");
+								studentHomePage(currStudent, scanner);
+							}
 						} else {
-							System.out.println("There are no details available for this Attempt! ...\n Redirecting you to Homepage.. \n\n ");
+							System.out.println("You have no completed attempts..\n Redirecting you to Homepage.. \n\n");
 							studentHomePage(currStudent, scanner);
-						}							
-					}
-					else {
-						// Invalid Attempt ID
-						System.out.println("\n\nInvalid attempt ID !! Please try again .. \n Redirecting you to Homepage.. \n\n");
+						}
+					} else {
+						System.out
+								.println("\n\nHW IS NULL !! Please try again .. \n Redirecting you to Homepage.. \n\n");
 						studentHomePage(currStudent, scanner);
 					}
 				}
 				else {
-					System.out.println("You have no completed attempts..\n Redirecting you to Homepage.. \n\n");
-					studentHomePage(currStudent, scanner);
+					System.out
+					.println("\n\nInvalid HW ID !! Please try again .. \n Redirecting you to Homepage.. \n\n");
+			studentHomePage(currStudent, scanner);
 				}
-				
-			}else if (listHW.size()==0) {
+
+			} else if (listHW.size() == 0) {
 				System.out.println("There are no past HW to be displayed! ");
 				System.out.println("Enter 1 for Current HWs and 2 For Past HWs:");
 				HWChoice = scanner.nextInt();
 			}
-			
 
 		} else if (HWChoice != 1 || HWChoice != 2) {
 			System.out.println("##########Invalid Choice########");
@@ -433,30 +465,32 @@ public class StudentAccount {
 		List<Answer> listofAns = StudentProcessor.retreiveAnswers(q_id, val_id);
 		int listSize = listofAns.size();
 		int correctCount = rand.nextInt((3 - 1) + 1) + 1;
-		System.out.println("Correct count = "+correctCount);
+		System.out.println("Correct count = " + correctCount);
 		int wrongCount = 4 - correctCount;
-		System.out.println("Wrong count = "+wrongCount);
+		System.out.println("Wrong count = " + wrongCount);
 
 		// Print question and answers
-		
-		//int min = 1;
-		//int numAnswers = rand.nextInt((listSize - min) + 1) + min;
+
+		// int min = 1;
+		// int numAnswers = rand.nextInt((listSize - min) + 1) + min;
 		System.out.println("QUESTION " + q_id);
 		System.out.println("\n\n" + ques_text);
-		
+
 		for (int i = 0; i < listSize; i++) {
-			if(listofAns.get(i).getIs_correct().toString().equals("T")) {
-				System.out.println(i + ". " + listofAns.get(i).getA_id() + listofAns.get(i).getIs_correct() + listofAns.get(i).getAns_explanation());
-				correctCount-=1;
-			}else if(listofAns.get(i).getIs_correct().equals("F")) {
-				System.out.println(i + ". " + listofAns.get(i).getA_id() + listofAns.get(i).getIs_correct() + listofAns.get(i).getAns_explanation());
-				wrongCount-=1;
-			}
-			else {
-				System.out.println(i + ". " + listofAns.get(i).getA_id() + listofAns.get(i).getIs_correct() + listofAns.get(i).getAns_explanation());
+			if (listofAns.get(i).getIs_correct().toString().equals("T")) {
+				System.out.println(i + ". " + listofAns.get(i).getA_id() + listofAns.get(i).getIs_correct()
+						+ listofAns.get(i).getAns_explanation());
+				correctCount -= 1;
+			} else if (listofAns.get(i).getIs_correct().equals("F")) {
+				System.out.println(i + ". " + listofAns.get(i).getA_id() + listofAns.get(i).getIs_correct()
+						+ listofAns.get(i).getAns_explanation());
+				wrongCount -= 1;
+			} else {
+				System.out.println(i + ". " + listofAns.get(i).getA_id() + listofAns.get(i).getIs_correct()
+						+ listofAns.get(i).getAns_explanation());
 			}
 		}
-		
+
 		// Get user's answer
 		// Call stored procedure update_ans()
 		String userChoice = scanner.next();
@@ -466,7 +500,7 @@ public class StudentAccount {
 		// If ques_id returned == 0, then exit. Else, recursively call
 		// takeTest()
 		q_id = StudentProcessor.retrieveQuestion(a_id, hw_id, user_id, courseId);
-		System.out.println("QID"+q_id);
+		System.out.println("QID" + q_id);
 		if (q_id.equals("-1") || q_id.equals("0")) {
 			System.out.println("You have completed this Attempt!");
 			studentHomePage(currStudent, scanner);

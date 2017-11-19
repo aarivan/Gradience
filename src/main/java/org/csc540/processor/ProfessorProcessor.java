@@ -328,10 +328,10 @@ public class ProfessorProcessor {
 		return null;
 	}
 	
-	public static List<HomeWork> getHWExcerciseDetails(String HWId) {
+	public static List<HomeWork> getHWExcerciseDetails(String HWId, String course_id) {
 		try {
 			Connection conn = Session.getConnection();
-			String getHW = "select * from homework where hw_id='"+HWId+"'";
+			String getHW = "select * from homework where hw_id='"+HWId+"' AND course_id = '"+course_id+"'";
 			PreparedStatement ps = conn.prepareStatement(getHW);
 			ResultSet getHW_result = ps.executeQuery();
 			List<HomeWork> listHW = StudentProcessor.convertResultSetToHWPOJO(getHW_result);
@@ -559,6 +559,7 @@ public class ProfessorProcessor {
 		return result;
 		
 	}
+	
 	public static List<Report> viewReport(String courseId) {
 		List<Report> reportlist = null;
 		try {
