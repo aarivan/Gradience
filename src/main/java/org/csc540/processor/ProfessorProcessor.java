@@ -383,8 +383,6 @@ public class ProfessorProcessor {
 		PreparedStatement ps = null;
 		 
         SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");
-       // Date new_start =formatter.parse(hwStartDate);
-		//Date new_end =formatter.parse(hwEndDate);
 		System.out.println("new_end no "+hwEndDate+ "new_end ");
       
 
