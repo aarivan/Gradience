@@ -340,7 +340,7 @@ public class TeachingAssistantAccount {
 			
 			String HWId = scanner.next();
 			
-			List<HomeWork> listHWDetails = ProfessorProcessor.getHWExcerciseDetails(HWId);
+			List<HomeWork> listHWDetails = ProfessorProcessor.getHWExcerciseDetails(HWId,course.getCourseId());
 				i = 0;
 				boolean HW_found = false;
 				while (i < listHWDetails.size()) {
