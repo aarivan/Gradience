@@ -524,8 +524,8 @@ public class StudentProcessor {
 
 			PreparedStatement ps = conn.prepareStatement(getCompletedAttemptIDs);
 			ResultSet getCompletedAttemptID = ps.executeQuery();
+			
 			List<Integer> attempt_id_list = convertResultSetToIntegerPOJO(getCompletedAttemptID);
-
 			return attempt_id_list;
 
 		} catch (Exception e) {

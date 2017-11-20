@@ -139,15 +139,8 @@ public class StudentAccount {
 			}
 
 		} else if (editChoice == 3) {
-			System.out.println("Editting StudentID");
-			System.out.println("Enter the new Student ID:");
-			String new_StudentID = scanner.next();
-			currStudent.setUserId(new_StudentID);
-			try {
-				StudentProcessor.updateStudentProfile(currStudent);
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
+			System.out.println("Editting StudentID is Prohibited! \n\n");
+			
 
 		} else if (editChoice == 4) {
 			System.out.println("Editting Address");
@@ -245,7 +238,6 @@ public class StudentAccount {
 					} else {
 						// New attempt
 						// Call add_atttempt() and then retreive_question()
-						System.out.println("Line 249");
 						a_id = StudentProcessor.addAttempt(hw_id, user_id, courseId);
 						if (a_id > 0) {
 							q_id = StudentProcessor.retrieveQuestion(a_id, hw_id, user_id, courseId);
@@ -266,7 +258,7 @@ public class StudentAccount {
 					// Get completed attempts
 					List<Integer> complete_attempt_id = StudentProcessor.getCompleteAttemptIDs(courseId, user_id,
 							hw_id);
-					if (complete_attempt_id != null) {
+					if (complete_attempt_id.size() != 0) {
 						System.out.println("\n\n###### Your Completed Attempts #######\n");
 						for (int i = 0; i < complete_attempt_id.size(); i++) {
 							System.out.println((i + 1) + ". Attempt ID: " + complete_attempt_id.get(i));
@@ -278,7 +270,7 @@ public class StudentAccount {
 							// Valid Attempt ID
 							List<CompletedAttempts> completedAttempts = StudentProcessor
 									.getCompletedAttempts(attempt_choice, courseId, hw_id, user_id);
-							if (completedAttempts != null) {
+							if (completedAttempts.size() != 0) {
 								System.out.println("************************************************");
 								System.out.println("\nAttempt ID: " + completedAttempts.get(0).getAttempt_id());
 								System.out.println("HW ID: " + completedAttempts.get(0).getHw_id());
@@ -339,13 +331,11 @@ public class StudentAccount {
 
 		} else if (HWChoice == 2) {
 			List<HomeWork> listHW = StudentProcessor.getPastHW(courseId);
-			List<String> listValidHWIds = null;
 			System.out.println("###### Past HWs #######");
 			if (listHW.size() != 0) {
 				for (int i = 0; i < listHW.size(); i++) {
 					System.out
 							.println("HW ID: " + listHW.get(i).getHw_id() + " HW Name: " + listHW.get(i).getHW_name());
-//					listValidHWIds.add(i, element);
 				}
 				System.out.println("Enter the HW ID to view that HW: ");
 				String hw_id = scanner.next();
@@ -357,7 +347,7 @@ public class StudentAccount {
 				}
 				if(flag){
 					List<HomeWork> listHWDetail = StudentProcessor.getHWExcerciseDetails(hw_id, courseId);
-					if (listHWDetail != null) {
+					if (listHWDetail.size() != 0) {
 						int total_score = StudentProcessor.getTotalscoreFromScoringPolicy(hw_id, user_id,courseId);
 						int studentAttemptCount = StudentProcessor.getCountStudentAttempt(hw_id, user_id,courseId);
 						// List<Attempts> listAttempts =
@@ -373,7 +363,7 @@ public class StudentAccount {
 						// Get completed attempts
 						List<Integer> complete_attempt_id = StudentProcessor.getCompleteAttemptIDs(courseId, user_id,
 								hw_id);
-						if (complete_attempt_id != null) {
+						if (complete_attempt_id.size() != 0) {
 							System.out.println("\n\n###### Your Completed Attempts #######\n");
 							for (int i = 0; i < complete_attempt_id.size(); i++) {
 								System.out.println((i + 1) + ". Attempt ID: " + complete_attempt_id.get(i));
@@ -385,7 +375,7 @@ public class StudentAccount {
 								// Valid Attempt ID
 								List<CompletedAttempts> completedAttempts = StudentProcessor
 										.getCompletedAttempts(attempt_choice, courseId, hw_id, user_id);
-								if (completedAttempts != null) {
+								if (completedAttempts.size() != 0) {
 									System.out.println("************************************************");
 									System.out.println("\nAttempt ID: " + completedAttempts.get(0).getAttempt_id());
 									System.out.println("HW ID: " + completedAttempts.get(0).getHw_id());
