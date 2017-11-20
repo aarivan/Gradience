@@ -315,7 +315,7 @@ public class ProfessorProcessor {
 	public static List<HomeWork> getHWExcerciseForCourse(String course_id) {
 		try {
 			Connection conn = Session.getConnection();
-			String getHW = "select * from homework where course_id='"+course_id+"'";
+			String getHW = "select * from homework where course_id='"+course_id+"' ORDER BY hw_id ASC";
 			PreparedStatement ps = conn.prepareStatement(getHW);
 			ResultSet getHW_result = ps.executeQuery();
 			List<HomeWork> listHW = StudentProcessor.convertResultSetToHWPOJO(getHW_result);
@@ -380,31 +380,21 @@ public class ProfessorProcessor {
 	public static void addHomeWork(String hw_id,String course_Id,String topicId,String hwName, int maxTries, String hwStartDate,String hwEndDate,int correct_pt,
 			int penalty_pt,String scoring_policy,int diffLevel, String hw_type) throws SQLException, ParseException {
 		Connection conn = null;
-		PreparedStatement ps = null;
-		 
-        SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");
+		PreparedStatement ps = null;	 
 		System.out.println("new_end no "+hwEndDate+ "new_end ");
-      
-
 		String insertTableSQL = "INSERT INTO HOMEWORK (hw_id, course_id, topic_id, HW_name, max_no_of_tries, hw_st_date, hw_end_date, "
 				+ "correct_pts, penalty_pts, score_policy, diff_level,hw_type) VALUES "
 				+ "('"+hw_id+"', '"+course_Id+"', '"+topicId+"','"+hwName+"', "+maxTries
 						+ ",'"+hwStartDate+"','"+hwEndDate+"', "+correct_pt+", "+penalty_pt+", "
 								+ "'"+scoring_policy+"', "+diffLevel+",'"+hw_type+"')";
-
 		try {
 			conn = Session.getConnection();
 			ps = conn.prepareStatement(insertTableSQL);
 			ps.execute();
 			System.out.println("HW Added!!");
-		} catch (SQLException e) {
-			
+		} catch (SQLException e) {			
 			System.out.println("there was an exception while Adding HW "+e.getMessage());
-		}catch (Exception e) {
-			
-			System.out.println("there was an exception while Adding HW "+e.getMessage());
-		}
-		
+		}	
 	}
 	
 	public static void updateprofessorProfile(Professor professorUser) throws SQLException{
@@ -547,10 +537,10 @@ public class ProfessorProcessor {
 				temp.setHw_id(hw_id);
 				String course_id = set.getString(DBFieldConstants.REPORT_COURSE_ID);
 				temp.setCourse_id(course_id);
-				String attempt_id = set.getString(DBFieldConstants.REPORT_ATTEMPT_ID);
+				int attempt_id = set.getInt(DBFieldConstants.REPORT_ATTEMPT_ID);
 				temp.setAttempt_id(attempt_id);
-				String total_score = set.getString(DBFieldConstants.REPORT_TOTAL_SCORE);
-				temp.setCourse_id(course_id);
+				int total_score = set.getInt(DBFieldConstants.REPORT_TOTAL_SCORE);
+				temp.setTotal_score(total_score);
 				result.add(temp);
 			}
 		} catch (Exception e) {

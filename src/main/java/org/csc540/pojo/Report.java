@@ -8,7 +8,7 @@ public class Report
 	private String hw_id;
 	private String course_id;
 	private int total_score;
-	private String attempt_id;
+	private int attempt_id;
 	
 	public String getFirst_name() {
 		return first_name;
@@ -54,10 +54,10 @@ public class Report
 		return "[ First Name: " + first_name + ", Last Name: " + last_name +  ", Student ID: " + stud_id + ", HW ID: " + hw_id
 				+ ", COURSE ID : " + course_id + ", Attempt ID: " + attempt_id + ", Total Score: " + total_score  + " ]";
 	}
-	public String getAttempt_id() {
+	public int getAttempt_id() {
 		return attempt_id;
 	}
-	public void setAttempt_id(String attempt_id2) {
+	public void setAttempt_id(int attempt_id2) {
 		this.attempt_id = attempt_id2;
 	}
 	
