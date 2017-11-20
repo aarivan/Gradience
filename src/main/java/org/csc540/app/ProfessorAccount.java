@@ -281,7 +281,7 @@ public class ProfessorAccount {
 			case 6:
 				// VIEW REPORT
 				profCourseList = ProfessorProcessor.getCourses(professorUser.getUserId());
-				if (profCourseList != null) {
+				if (profCourseList.size() != 0) {
 					System.out.println("\n\n");
 					System.out.println("----------------------------");
 					System.out.println("List of your Courses as Instructor:");
@@ -311,7 +311,7 @@ public class ProfessorAccount {
 							if (profCourseList.get(i).getCourseId().equalsIgnoreCase(courseId)) {
 								List<Report> report_details = ProfessorProcessor
 										.viewReport(profCourseList.get(i).getCourseId());
-								if (report_details != null) {
+								if (report_details.size() != 0) {
 									int j = 0;
 									System.out.println("\nReport for Course "+courseId+":\n");
 									System.out.println("\n S.No \t | StudentID \t | First name \t | Last Name \t | Homework \t | Attempt # \t | Score for this attempt \t \n ");

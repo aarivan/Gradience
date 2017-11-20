@@ -263,7 +263,7 @@ public class TeachingAssistantAccount {
 				// VIEW REPORT
 				taCourseList = TeachingAssistantProcessor.getTACourses(studentUser.getUserId());
 
-				if (taCourseList != null) {
+				if (taCourseList.size() != 0) {
 					System.out.println("\n\n");
 					System.out.println("----------------------------");
 					System.out.println("List of your Courses as TA:");
@@ -293,7 +293,7 @@ public class TeachingAssistantAccount {
 							if (taCourseList.get(i).getCourseId().equalsIgnoreCase(courseId)) {
 								List<Report> report_details = ProfessorProcessor
 										.viewReport(taCourseList.get(i).getCourseId());
-								if (report_details != null) {
+								if (report_details.size() != 0) {
 									int j = 0;
 									System.out.println("\nReport for Course " + courseId + ":\n");
 									System.out.println(
@@ -429,7 +429,7 @@ public class TeachingAssistantAccount {
 
 	public static void viewHWExerciseTA(CourseEnrollment course, Scanner scanner, Student studentUser) {
 		List<HomeWork> listHWExcercise = ProfessorProcessor.getHWExcerciseForCourse(course.getCourseId());
-		if (listHWExcercise != null) {
+		if (listHWExcercise.size() != 0) {
 			System.out.println("\n\n");
 			System.out.println("----------------------------");
 			System.out.println("List of HW Excercise/s for the course:");
