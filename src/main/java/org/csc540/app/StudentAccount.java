@@ -202,7 +202,7 @@ public class StudentAccount {
 		String user_id = currStudent.getUserId();
 		System.out.println("\n\n\n\n\n");
 		System.out.println("######Display HW for course: " + courseId);
-		System.out.println("1.Current Open HWs \n2. Past HWs");
+		System.out.println("\n 1.Current Open HWs \n2. Past HWs");
 		System.out.println("Enter 1 for Current HWs and 2 For Past HWs:");
 		int HWChoice = scanner.nextInt();
 		int choice = 1;
@@ -210,7 +210,6 @@ public class StudentAccount {
 		int a_id;
 		if (HWChoice == 1) {
 			List<HomeWork> listHW = StudentProcessor.getOpenHW(courseId);
-			System.out.println("\n\n\n\n\n");
 			System.out.println("###### Open HWs #######");
 			for (int i = 0; i < listHW.size(); i++) {
 				System.out.println("HW ID: " + listHW.get(i).getHw_id() + " HW Name: " + listHW.get(i).getHW_name());
@@ -218,7 +217,6 @@ public class StudentAccount {
 			if (listHW.size() > 0) {
 				System.out.println("\nEnter the HW ID: ");
 				String hw_id = scanner.next();
-				System.out.println("\n\n\n\n\n");
 				System.out.println(
 						"\n 1. View Completed Attempts \n2.Incomplete/New Attempts \n\n Press any other number to exit!\n");
 				int new_choice = scanner.nextInt();
@@ -256,7 +254,6 @@ public class StudentAccount {
 								takeTest(a_id, hw_id, user_id, courseId, q_id, scanner, currStudent);
 							}
 						} else {
-							System.out.println("\n\n\n\n\n");
 							System.out.println("Sorry! You have exhausted all your attempts for this Homework!! \n\n");
 						}
 					}
@@ -266,7 +263,6 @@ public class StudentAccount {
 					List<Integer> complete_attempt_id = StudentProcessor.getCompleteAttemptIDs(courseId, user_id,
 							hw_id);
 					if (complete_attempt_id.size() != 0) {
-						System.out.println("\n\n\n\n\n");
 						System.out.println("\n\n###### Your Completed Attempts #######\n");
 						for (int i = 0; i < complete_attempt_id.size(); i++) {
 							System.out.println((i + 1) + ". Attempt ID: " + complete_attempt_id.get(i));
@@ -339,7 +335,6 @@ public class StudentAccount {
 
 		} else if (HWChoice == 2) {
 			List<HomeWork> listHW = StudentProcessor.getPastHW(courseId);
-			System.out.println("\n\n\n\n\n");
 			System.out.println("###### Past HWs #######");
 			if (listHW.size() != 0) {
 				for (int i = 0; i < listHW.size(); i++) {
@@ -373,7 +368,6 @@ public class StudentAccount {
 						List<Integer> complete_attempt_id = StudentProcessor.getCompleteAttemptIDs(courseId, user_id,
 								hw_id);
 						if (complete_attempt_id.size() != 0) {
-							System.out.println("\n\n\n\n\n");
 							System.out.println("\n\n###### Your Completed Attempts #######\n");
 							for (int i = 0; i < complete_attempt_id.size(); i++) {
 								System.out.println((i + 1) + ". Attempt ID: " + complete_attempt_id.get(i));
