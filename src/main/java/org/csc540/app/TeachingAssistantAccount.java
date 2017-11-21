@@ -8,6 +8,7 @@ import java.util.Scanner;
 import javax.swing.plaf.synth.SynthSeparatorUI;
 
 import org.apache.log4j.Logger;
+import org.csc540.pojo.CompletedAttempts;
 import org.csc540.pojo.Course;
 import org.csc540.pojo.CourseEnrollment;
 import org.csc540.pojo.HomeWork;
@@ -230,7 +231,7 @@ public class TeachingAssistantAccount {
 					i++;
 				}
 
-				System.out.println("Please enter Course ID for which you would like view HW Excercise/s:\n\n");
+				System.out.println("Please enter Course ID for which you would like add HW Excercise/s:\n\n");
 				System.out.println("### Press 0 to Go Back ###\n\n");
 				courseId = scanner.next();
 				if (courseId.equals("0")) {
@@ -289,11 +290,14 @@ public class TeachingAssistantAccount {
 					}
 					if (courseFlag) {
 						i = 0;
+						List<Report> temp = null;
 						while (i < taCourseList.size()) {
 							if (taCourseList.get(i).getCourseId().equalsIgnoreCase(courseId)) {
 								List<Report> report_details = ProfessorProcessor
 										.viewReport(taCourseList.get(i).getCourseId());
+								temp = report_details;
 								if (report_details.size() != 0) {
+
 									int j = 0;
 									System.out.println("\nReport for Course " + courseId + ":\n");
 									System.out.println(
@@ -307,31 +311,36 @@ public class TeachingAssistantAccount {
 												+ report_details.get(j).getTotal_score());
 										j++;
 									}
-									i++;
+
 								} else {
 									System.out.println("\n\n There are no details to be displayed right now! \n\n");
 									break;
 								}
 							}
-							System.out.println("\n\n### Press 0 to Go Back ###\n\n");
-							newChoice = scanner.nextInt();
-							while (newChoice != 0) {
-								System.out
-										.println("\nInvalid choice!! Please enter 0 to go back to previous page!!\n\n");
-								newChoice = scanner.nextInt();
-							}
-							break;
+							i++;
 						}
+						System.out.println(
+								"\n\n### Press 0 to Go Back ### OR ### Press 1 to see detailed Report ###\n\n");
+						newChoice = scanner.nextInt();
+						if (newChoice == 1) {
+							viewDetailedReport(courseId, temp, scanner);
+							newChoice = 0;
+						}
+						while (newChoice != 0) {
+							System.out.println("\nInvalid choice!! Please enter 0 to go back to previous page!!\n\n");
+							newChoice = scanner.nextInt();
+						}
+						break;
 					} else {
 						System.out.println("\n Invalid course ID enetered! \n");
 						break;
 					}
 
 				} else {
-					System.out.println("\n\n There are no courses for this Professor! ... ");
+					System.out.println("\n\n There are no courses for this TA! ... ");
 					break;
 				}
-				break;
+
 			case 8:
 				// logout
 				selection = 8;
@@ -342,7 +351,65 @@ public class TeachingAssistantAccount {
 		}
 		Main.main(null);
 	}
+	
+	public static void viewDetailedReport(String courseId, List<Report> temp, Scanner scanner) {
+		if (temp.size() != 0) {
+			System.out.println("\nPlease enter Student ID: ");
+			String student_id = scanner.next();
+			System.out.println("\nPlease enter Homework ID: ");
+			String hw_id = scanner.next();
+			System.out.println("\nPlease enter Attempt ID: ");
+			int attempt_id = scanner.nextInt();
+			Boolean flag = false;
+			for (int i = 0; i < temp.size(); i++) {
+				if (temp.get(i).getStud_id().equals(student_id)) {
+					if (temp.get(i).getHw_id().equals(hw_id)) {
+						if (temp.get(i).getAttempt_id() == attempt_id) {
+							// Display Report
+							flag = true;
+							List<CompletedAttempts> completedAttempts = StudentProcessor
+									.getCompletedAttempts(attempt_id, courseId, hw_id, student_id);
+							if (completedAttempts.size() != 0) {
+								System.out.println("************************************************");
+								System.out.println("\nAttempt ID: " + completedAttempts.get(0).getAttempt_id());
+								System.out.println("HW ID: " + completedAttempts.get(0).getHw_id());
+								System.out.println("Course ID: " + completedAttempts.get(0).getCourse_id());
+								System.out
+										.println("\nTotal score: " + completedAttempts.get(0).getTotal_score() + "\n");
+								for (int j = 0; j < completedAttempts.size(); j++) {
+									System.out.println("\n************************************************");
+									System.out.println("Question ID: " + completedAttempts.get(j).getQues_id());
+									System.out.println("Question Text: " + completedAttempts.get(j).getQues_text());
+									System.out
+											.println("Student's Answer (ID): " + completedAttempts.get(j).getAns_id());
+									System.out.println("Student's Answer (Text Description): "
+											+ completedAttempts.get(j).getA_expln());
+									if (completedAttempts.get(j).getScore_per_ques() <= 0) {
+										System.out.println("\n Student's answer is : INCORRECT");
+									} else {
+										System.out.println("\n Student's answer is : CORRECT");
+									}
+									System.out.println("\nStudent's Score for this Question: "
+											+ completedAttempts.get(j).getScore_per_ques());
+								}
+								System.out.println("************************************************");
 
+							} else {
+								System.out.println("There are no details available for this Attempt! \n\n ");
+							}
+						}
+					}
+				}
+			}
+			if (!flag) {
+				System.out.println("\nInvalid details entered! Please try again.. \n\n");
+			}
+		} else {
+			System.out.println("\n\nThere are no detailed reports available right now ! \n\n");
+		}
+
+	}
+	
 	public static void addHWExerciseTA(String courseId, Scanner scanner) {
 		System.out.println("\nADD HW Excercise:\n\n");
 		System.out.println("----------------------------");

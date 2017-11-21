@@ -11,6 +11,7 @@ import java.util.Scanner;
 import javax.swing.plaf.synth.SynthSeparatorUI;
 
 import org.apache.log4j.Logger;
+import org.csc540.pojo.CompletedAttempts;
 import org.csc540.pojo.Course;
 import org.csc540.pojo.CourseEnrollment;
 import org.csc540.pojo.HomeWork;
@@ -133,7 +134,7 @@ public class ProfessorAccount {
 				System.out.println("Please enter Course ID for which you would like to enter:\n\n");
 				System.out.println("### Press 0 to Go Back ###\n\n");
 				courseId = scanner.next();
-				if (courseId == "0") {
+				if (courseId.equals("0")) {
 					break;
 				} else {
 					i = 0;
@@ -161,14 +162,12 @@ public class ProfessorAccount {
 			case 3:
 				// ADD COURSE
 				System.out.println("\nADD COURSE:");
-				System.out.println("### Press 0 to Go Back ###\n\n");
-
 				System.out.println("\n\n");
 				System.out.println("----------------------------");
 				System.out.println("Please enter the details of the new course to be added:");
 				System.out.println("----------------------------");
 
-				Boolean flag;
+				// Boolean flag;
 				System.out.println("\n\n");
 				System.out.println("Enter Course ID: ");
 				String course_id = scanner.next();
@@ -184,15 +183,18 @@ public class ProfessorAccount {
 				System.out.println("Enter Class Size: ");
 				String courseSize = scanner.next();
 
-				flag = validatingCourseDetails(course_id, courseName, courseStartDate, courseEndDate);
+				// flag = validatingCourseDetails(course_id, courseName,
+				// courseStartDate, courseEndDate);
 
-				if (flag) {
-					ProfessorProcessor.addCourse(course_id, courseName, courseStartDate, courseEndDate,
-							professorUser.getUserId(), courseLevel, 0, courseSize);
-				} else {
-					System.out.println("Invalid Course details provided! Please try again.. ");
+				ProfessorProcessor.addCourse(course_id, courseName, courseStartDate, courseEndDate,
+						professorUser.getUserId(), courseLevel, 0, courseSize);
+
+				System.out.println("\n\n### Press 0 to Go Back ###\n\n");
+				newChoice = scanner.nextInt();
+				while (newChoice != 0) {
+					System.out.println("\nInvalid choice!! Please enter 0 to go back to previous page!!\n\n");
+					newChoice = scanner.nextInt();
 				}
-
 				break;
 			case 4:
 				// ENROLL STUDENT TO COURSE
@@ -211,7 +213,7 @@ public class ProfessorAccount {
 				System.out.println("Please enter Course ID for which you would like to enter:\n\n");
 				System.out.println("### Press 0 to Go Back ###\n\n");
 				courseId = scanner.next();
-				if (courseId == "0") {
+				if (courseId.equals("0")) {
 					break;
 				} else {
 					i = 0;
@@ -253,7 +255,7 @@ public class ProfessorAccount {
 				System.out.println("Please enter Course ID for which you would like to enter:\n\n");
 				System.out.println("### Press 0 to Go Back ###\n\n");
 				courseId = scanner.next();
-				if (courseId == "0") {
+				if (courseId.equals("0")) {
 					break;
 				} else {
 					i = 0;
@@ -307,39 +309,47 @@ public class ProfessorAccount {
 					}
 					if (courseFlag) {
 						i = 0;
+						List<Report> temp = null;
 						while (i < profCourseList.size()) {
 							if (profCourseList.get(i).getCourseId().equalsIgnoreCase(courseId)) {
 								List<Report> report_details = ProfessorProcessor
 										.viewReport(profCourseList.get(i).getCourseId());
+								temp = report_details;
 								if (report_details.size() != 0) {
+
 									int j = 0;
-									System.out.println("\nReport for Course "+courseId+":\n");
-									System.out.println("\n S.No \t | StudentID \t | First name \t | Last Name \t | Homework \t | Attempt # \t | Score for this attempt \t \n ");
+									System.out.println("\nReport for Course " + courseId + ":\n");
+									System.out.println(
+											"\n S.No \t | StudentID \t | First name \t | Last Name \t | Homework \t | Attempt # \t | Score for this attempt \t \n ");
 									while (j < report_details.size()) {
-										System.out
-												.println((j + 1) + "\t | " + report_details.get(j).getStud_id()
-														+ "\t | " + report_details.get(j).getFirst_name()
-														+ "\t\t | " + report_details.get(j).getLast_name()
-														+ "\t | " + report_details.get(j).getHw_id()
-														+ "\t\t | " + report_details.get(j).getAttempt_id()
-														+ "\t\t | " + report_details.get(j).getTotal_score());
+										System.out.println((j + 1) + "\t | " + report_details.get(j).getStud_id()
+												+ "\t | " + report_details.get(j).getFirst_name() + "\t\t | "
+												+ report_details.get(j).getLast_name() + "\t | "
+												+ report_details.get(j).getHw_id() + "\t\t | "
+												+ report_details.get(j).getAttempt_id() + "\t\t | "
+												+ report_details.get(j).getTotal_score());
 										j++;
 									}
-									i++;
+
 								} else {
 									System.out.println("\n\n There are no details to be displayed right now! \n\n");
 									break;
 								}
 							}
-							System.out.println("\n\n### Press 0 to Go Back ###\n\n");
-							newChoice = scanner.nextInt();
-							while (newChoice != 0) {
-								System.out
-										.println("\nInvalid choice!! Please enter 0 to go back to previous page!!\n\n");
-								newChoice = scanner.nextInt();
-							}
-							break;
+							i++;
 						}
+						System.out.println(
+								"\n\n### Press 0 to Go Back ### OR ### Press 1 to see detailed Report ###\n\n");
+						newChoice = scanner.nextInt();
+						if (newChoice == 1) {
+							viewDetailedReport(courseId, temp, scanner);
+							newChoice = 0;
+						}
+						while (newChoice != 0) {
+							System.out.println("\nInvalid choice!! Please enter 0 to go back to previous page!!\n\n");
+							newChoice = scanner.nextInt();
+						}
+						break;
 					} else {
 						System.out.println("\n Invalid course ID enetered! \n");
 						break;
@@ -349,7 +359,6 @@ public class ProfessorAccount {
 					System.out.println("\n\n There are no courses for this Professor! ... ");
 					break;
 				}
-				break;
 
 			case 7:
 				// SETUP TA
@@ -368,7 +377,7 @@ public class ProfessorAccount {
 				System.out.println("Please enter Course ID for which you would like to add TA/s:\n\n");
 				System.out.println("### Press 0 to Go Back ###\n\n");
 				courseId = scanner.next();
-				if (courseId == "0") {
+				if (courseId.equals("0")) {
 					break;
 				} else {
 					i = 0;
@@ -415,7 +424,7 @@ public class ProfessorAccount {
 				System.out.println("Please enter Course ID for which you would like view HW Excercise/s:\n\n");
 				System.out.println("### Press 0 to Go Back ###\n\n");
 				courseId = scanner.next();
-				if (courseId == "0") {
+				if (courseId.equals("0")) {
 					break;
 				} else {
 					i = 0;
@@ -443,54 +452,50 @@ public class ProfessorAccount {
 
 			case 9:
 				// ADD HW EXCERCISE
-
-				System.out.println("\nADD HW Excercise:");
-				System.out.println("### Press 0 to Go Back ###\n\n");
-
+				profCourseList = ProfessorProcessor.getCourses(professorUser.getUserId());
 				System.out.println("\n\n");
 				System.out.println("----------------------------");
-				System.out.println("Please enter the details of the new HW to be added:");
+				System.out.println("List of your Courses as Instructor:");
 				System.out.println("----------------------------");
-				System.out.println("\n");
-				System.out.println("Enter HW ID: ");
-				String hw_id = scanner.next();
-				System.out.println("Enter HW Name: ");
-				scanner.nextLine();
-				String hwName = scanner.nextLine();
-				System.out.println("Enter Start Date: ");
-				String hwStartDate = scanner.next();
-				System.out.println("Enter End Date: ");
-				String hwEndDate = scanner.next();
-				System.out.println("Enter Dificulty Level [1-5]: ");
-				int diffLevel = scanner.nextInt();
-				System.out.println("Enter Maximum Number of tries allowed: ");
-				int maxTries = scanner.nextInt();
-				System.out.println("Enter Scoring policy 'latest','max', 'avg': ");
-				String scoring_policy = scanner.next();
-				System.out.println("Enter Correct points: ");
-				int correct_pt = scanner.nextInt();
-				System.out.println("Enter Penalty points: ");
-				int penalty_pt = scanner.nextInt();
-				System.out.println("Enter Topic ID: ");
-				String topicId = scanner.next();
-				System.out.println("Enter Course ID : ");
-				String course_Id = scanner.next();
-				System.out.println("Enter HW Type : ");
-				String hw_type = scanner.next();
-				try {
-					ProfessorProcessor.addHomeWork(hw_id, course_Id, topicId, hwName, maxTries, hwStartDate, hwEndDate,
-							correct_pt, penalty_pt, scoring_policy, diffLevel, hw_type);
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+
+				i = 0;
+				while (i < profCourseList.size()) {
+					System.out.println((i + 1) + ". " + profCourseList.get(i).getCourseId());
+					i++;
 				}
 
-				break;
+				System.out.println("Please enter Course ID for which you would like view HW Excercise/s:\n\n");
+				System.out.println("### Press 0 to Go Back ###\n\n");
+				courseId = scanner.next();
+				if (courseId.equals("0")) {
+					break;
+				} else {
+					i = 0;
+					boolean course_found = false;
+					while (i < profCourseList.size()) {
+						if (profCourseList.get(i).getCourseId().equalsIgnoreCase(courseId)) {
+							addHWExercise(profCourseList.get(i).getCourseId(), scanner);
+							course_found = true;
+						}
+						i++;
+					}
+					if (!course_found) {
+						System.out.println("Invalid Course Id Entered..");
+						break;
+					} else {
+						System.out.println("\n\n### Press 0 to Go Back ###\n\n");
+						newChoice = scanner.nextInt();
+						while (newChoice != 0) {
+							System.out.println("\nInvalid choice!! Please enter 0 to go back to previous page!!\n\n");
+							newChoice = scanner.nextInt();
+						}
+						break;
+					}
+				}
 
 			case 10:
 				// Search/Add​ ​questions​ ​to​ ​Question​ ​Bank
 				System.out.println("\n::: ADD QUESTION TO QUESTION BANK :::");
-				System.out.println("### Press 0 to Go Back ###\n\n");
 
 				profCourseList = ProfessorProcessor.getCourses(professorUser.getUserId());
 				System.out.println("\n\n");
@@ -508,78 +513,112 @@ public class ProfessorAccount {
 				System.out.println("### Press 0 to Go Back ###\n\n");
 				courseId = scanner.next();
 
-				System.out.println("----------------------------");
-				System.out.println("List of Topic IDs:");
-				System.out.println("----------------------------");
-
-				List<Topic> profCourseTopicList = null;
-				profCourseTopicList = ProfessorProcessor.getCourseTopics(courseId);
-
+				Boolean courseflag = false;
 				i = 0;
-				while (i < profCourseTopicList.size()) {
-					System.out.println((i + 1) + ". " + profCourseTopicList.get(i).getTopicId() + "-----"
-							+ profCourseTopicList.get(i).getTopicName());
+				while (i < profCourseList.size()) {
+					if (profCourseList.get(i).getCourseId().equals(courseId)) {
+						courseflag = true;
+					}
 					i++;
 				}
+				if (courseflag) {
+					System.out.println("----------------------------");
+					System.out.println("List of Topic IDs:");
+					System.out.println("----------------------------");
 
-				System.out.println("Please enter the Topic ID to which you would like to add:");
-				System.out.println("### Press 0 to Go Back ###\n\n");
-				String topicId1 = scanner.next();
+					List<Topic> profCourseTopicList = ProfessorProcessor.getCourseTopics(courseId);
 
-				System.out.println("Please enter the Question ID:");
-				String quesId = scanner.next();
-
-				System.out.println("Please enter the Question type(P/NP) [P - Parameterized, NP - Non Parameterized]:");
-				String quesType = scanner.next();
-
-				System.out.println("Please enter the Question text:");
-				scanner.nextLine();
-				String quesText = scanner.nextLine();
-
-				System.out.println("Please enter the Question explanation:");
-
-				String quesExp = scanner.nextLine();
-				scanner.nextLine();
-
-				System.out.println("Please enter the difficulty level (1-5):");
-				int diffLevel1 = scanner.nextInt();
-
-				System.out.println("Please enter the Hint:");
-				scanner.nextLine();
-				String hint = scanner.nextLine();
-
-				ProfessorProcessor.addQuesToBank(quesId, topicId1, quesText, quesExp, diffLevel1, hint, quesType);
-
-				if (quesType.equals("NP")) {
-					addAns(quesId, scanner);
-				} else {
-
-					System.out.println("Enter the number of parameters: ");
-					int param_no = scanner.nextInt();
-					scanner.nextLine();
-
-					System.out.println("Enter the number of values: ");
-					int val = scanner.nextInt();
-					scanner.nextLine();
-
-					for (int j = 0; j < param_no; j++) {
-
-						System.out.println("Enter the parameter name: ");
-						String param_name = scanner.nextLine();
-						scanner.nextLine();
-
-						for (int k = 0; k < val; k++) {
-							System.out.println("Enter the parameter value " + (k + 1) + ":");
-							String param_val = scanner.nextLine();
-							scanner.nextLine();
-							ProfessorProcessor.addParamQues(quesId, Integer.toString(j + 1), Integer.toString(k + 1),
-									param_name, param_val);
-						}
+					i = 0;
+					while (i < profCourseTopicList.size()) {
+						System.out.println((i + 1) + ". " + profCourseTopicList.get(i).getTopicId() + "-----"
+								+ profCourseTopicList.get(i).getTopicName());
+						i++;
 					}
 
-					addAns(quesId, scanner);
-				}
+					System.out.println("Please enter the Topic ID to which you would like to add:");
+					String topicId1 = scanner.next();
 
+					Boolean flag = false;
+					i = 0;
+					while (i < profCourseTopicList.size()) {
+						if (profCourseTopicList.get(i).getTopicId().equals(topicId1)) {
+							flag = true;
+						}
+						i++;
+					}
+
+					if (flag) {
+						try {
+							System.out.println("Please enter the Question ID:");
+							String quesId = scanner.next();
+
+							System.out.println(
+									"Please enter the Question type(P/NP) [P - Parameterized, NP - Non Parameterized]:");
+							String quesType = scanner.next();
+
+							System.out.println("Please enter the Question text:");
+							scanner.nextLine();
+							String quesText = scanner.nextLine();
+
+							System.out.println("Please enter the Question explanation:");
+
+							String quesExp = scanner.nextLine();
+							scanner.nextLine();
+
+							System.out.println("Please enter the difficulty level (1-5):");
+							int diffLevel1 = scanner.nextInt();
+
+							System.out.println("Please enter the Hint:");
+							scanner.nextLine();
+							String hint = scanner.nextLine();
+
+							ProfessorProcessor.addQuesToBank(quesId, topicId1, quesText, quesExp, diffLevel1, hint,
+									quesType);
+
+							if (quesType.equals("NP")) {
+								addAns(quesId, scanner);
+							} else {
+
+								System.out.println("Enter the number of parameters: ");
+								int param_no = scanner.nextInt();
+								scanner.nextLine();
+
+								System.out.println("Enter the number of values: ");
+								int val = scanner.nextInt();
+								scanner.nextLine();
+
+								for (int j = 0; j < param_no; j++) {
+
+									System.out.println("Enter the parameter name: ");
+									String param_name = scanner.nextLine();
+									scanner.nextLine();
+
+									for (int k = 0; k < val; k++) {
+										System.out.println("Enter the parameter value " + (k + 1) + ":");
+										String param_val = scanner.nextLine();
+										scanner.nextLine();
+										ProfessorProcessor.addParamQues(quesId, Integer.toString(j + 1),
+												Integer.toString(k + 1), param_name, param_val);
+									}
+								}
+								addAns(quesId, scanner);
+							}
+						} catch (Exception e) {
+							System.out.println(e.getMessage());
+						}
+					} else {
+						System.out.println("\n\n Invalid Topic ID. \n\n");
+					}
+
+				} else {
+					System.out.println("\n\n Invalid Course ID. \n\n");
+				}
+				System.out.println("\n\n### Press 0 to Go Back ###\n\n");
+				newChoice = scanner.nextInt();
+				while (newChoice != 0) {
+					System.out.println("\nInvalid choice!! Please enter 0 to go back to previous page!!\n\n");
+					newChoice = scanner.nextInt();
+				}
 				break;
 			case 11:
 				// Add/Remove Questions from Exercises
@@ -598,7 +637,7 @@ public class ProfessorAccount {
 				System.out.println("Please enter Course ID for which you would like view HW Excercise/s:\n\n");
 				System.out.println("### Press 0 to Go Back ###\n\n");
 				courseId = scanner.next();
-				if (courseId == "0") {
+				if (courseId.equals("0")) {
 					break;
 				} else {
 					i = 0;
@@ -627,6 +666,100 @@ public class ProfessorAccount {
 		}
 		Main.main(null);
 		return null;
+	}
+
+	public static void addHWExercise(String courseId, Scanner scanner) {
+		System.out.println("\nADD HW Excercise:\n\n");
+		System.out.println("----------------------------");
+		System.out.println("Please enter details of the new Homework:");
+		System.out.println("----------------------------");
+		System.out.println("Enter HW ID: ");
+		String hw_id = scanner.next();
+		System.out.println("Enter HW Name: ");
+		scanner.nextLine();
+		String hwName = scanner.nextLine();
+		System.out.println("Enter Start Date: ");
+		String hwStartDate = scanner.next();
+		System.out.println("Enter End Date: ");
+		String hwEndDate = scanner.next();
+		System.out.println("Enter Dificulty Level [1-5]: ");
+		int diffLevel = scanner.nextInt();
+		System.out.println("Enter Maximum Number of tries allowed: ");
+		int maxTries = scanner.nextInt();
+		System.out.println("Enter Scoring policy 'latest','max', 'avg': ");
+		String scoring_policy = scanner.next();
+		System.out.println("Enter Correct points: ");
+		int correct_pt = scanner.nextInt();
+		System.out.println("Enter Penalty points: ");
+		int penalty_pt = scanner.nextInt();
+		System.out.println("Enter Topic ID: ");
+		String topicId = scanner.next();
+		System.out.println("Enter HW Type : ");
+		String hw_type = scanner.next();
+		try {
+			ProfessorProcessor.addHomeWork(hw_id, courseId, topicId, hwName, maxTries, hwStartDate, hwEndDate,
+					correct_pt, penalty_pt, scoring_policy, diffLevel, hw_type);
+		} catch (SQLException | ParseException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void viewDetailedReport(String courseId, List<Report> temp, Scanner scanner) {
+		if (temp.size() != 0) {
+			System.out.println("\nPlease enter Student ID: ");
+			String student_id = scanner.next();
+			System.out.println("\nPlease enter Homework ID: ");
+			String hw_id = scanner.next();
+			System.out.println("\nPlease enter Attempt ID: ");
+			int attempt_id = scanner.nextInt();
+			Boolean flag = false;
+			for (int i = 0; i < temp.size(); i++) {
+				if (temp.get(i).getStud_id().equals(student_id)) {
+					if (temp.get(i).getHw_id().equals(hw_id)) {
+						if (temp.get(i).getAttempt_id() == attempt_id) {
+							// Display Report
+							flag = true;
+							List<CompletedAttempts> completedAttempts = StudentProcessor
+									.getCompletedAttempts(attempt_id, courseId, hw_id, student_id);
+							if (completedAttempts.size() != 0) {
+								System.out.println("************************************************");
+								System.out.println("\nAttempt ID: " + completedAttempts.get(0).getAttempt_id());
+								System.out.println("HW ID: " + completedAttempts.get(0).getHw_id());
+								System.out.println("Course ID: " + completedAttempts.get(0).getCourse_id());
+								System.out
+										.println("\nTotal score: " + completedAttempts.get(0).getTotal_score() + "\n");
+								for (int j = 0; j < completedAttempts.size(); j++) {
+									System.out.println("\n************************************************");
+									System.out.println("Question ID: " + completedAttempts.get(j).getQues_id());
+									System.out.println("Question Text: " + completedAttempts.get(j).getQues_text());
+									System.out
+											.println("Student's Answer (ID): " + completedAttempts.get(j).getAns_id());
+									System.out.println("Student's Answer (Text Description): "
+											+ completedAttempts.get(j).getA_expln());
+									if (completedAttempts.get(j).getScore_per_ques() <= 0) {
+										System.out.println("\n Student's answer is : INCORRECT");
+									} else {
+										System.out.println("\n Student's answer is : CORRECT");
+									}
+									System.out.println("\nStudent's Score for this Question: "
+											+ completedAttempts.get(j).getScore_per_ques());
+								}
+								System.out.println("************************************************");
+
+							} else {
+								System.out.println("There are no details available for this Attempt! \n\n ");
+							}
+						}
+					}
+				}
+			}
+			if (!flag) {
+				System.out.println("\nInvalid details entered! Please try again.. \n\n");
+			}
+		} else {
+			System.out.println("\n\nThere are no detailed reports available right now ! \n\n");
+		}
+
 	}
 
 	public static Boolean validatingCourseDetails(String course_id, String courseName, String courseStartDate,
@@ -739,7 +872,7 @@ public class ProfessorAccount {
 		System.out.println("Please enter HW ID for which you would like to add or remove questions:\n\n");
 
 		String HWId = scanner.next();
-
+		
 		List<HomeWork> listHWDetails = ProfessorProcessor.getHWExcerciseDetails(HWId, course.getCourseId());
 		i = 0;
 		boolean HW_found = false;
@@ -752,7 +885,7 @@ public class ProfessorAccount {
 
 			if (!HW_found) {
 				System.out.println("Invalid HW Id Entered..");
-				viewHWExercise(course, scanner);
+				hwQues(course, scanner);
 				break;
 			}
 
@@ -819,7 +952,7 @@ public class ProfessorAccount {
 			scanner.nextLine();
 			q_id = scanner.nextLine();
 
-			ProfessorProcessor.addQuestiontoExercise(homeWork.getHw_id(), q_id);
+			ProfessorProcessor.addQuestiontoExercise(homeWork.getHw_id(), q_id, homeWork.getCourse_id());
 
 			System.out.println("Do you want to add another question? (Y/N)");
 			q_id = scanner.next();
@@ -834,13 +967,13 @@ public class ProfessorAccount {
 
 		String ch = "Y";
 		do {
-			System.out.println("Please enter the answer choice for the question:");
-			String ans = scanner.nextLine();
+			System.out.println("Please enter the answer choice "+ans_id+" description for the question:");
 			scanner.nextLine();
-
+			String ans = scanner.nextLine();
+			
 			System.out.println("Is this the correct answer? (T/F)");
 			String is_correct = scanner.next();
-
+			System.out.println("fsfsdf"+ans);
 			ProfessorProcessor.addAnswer(Integer.toString(ans_id), quesId, is_correct, ans);
 
 			ans_id++;
@@ -908,7 +1041,16 @@ public class ProfessorAccount {
 				e.printStackTrace();
 			}
 		} else if (editHWChoice == 4) {
-			System.out.println("Course ID for HW cannot be edited");
+			System.out.println("Editting HW Course ID");
+			scanner.nextLine();
+			System.out.println("Enter the new HW Course ID:");
+			String new_HW_course = scanner.nextLine();
+			homeWork.setCourse_id(new_HW_course);
+			try {
+				ProfessorProcessor.updateHomeWork(homeWork);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 
 		} else if (editHWChoice == 5) {
 			System.out.println("Editting Maximum number of tries");
@@ -941,7 +1083,17 @@ public class ProfessorAccount {
 				e.printStackTrace();
 			}
 		} else if (editHWChoice == 8) {
-			System.out.println("Cant edit Topic for HW");
+			System.out.println("Editting HW Topic ID");
+			scanner.nextLine();
+			System.out.println("Enter the new HW Topic ID:");
+			String new_HW_topic = scanner.nextLine();
+			homeWork.setTopic_id(new_HW_topic);
+			;
+			try {
+				ProfessorProcessor.updateHomeWork(homeWork);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 
 		} else if (editHWChoice == 9) {
 			System.out.println("Editting correct pts");
