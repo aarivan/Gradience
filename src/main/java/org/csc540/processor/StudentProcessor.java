@@ -189,11 +189,11 @@ public class StudentProcessor {
 			Connection conn = Session.getConnection();
 			String getAttempt = "select distinct attempt_ID from incomplete_attempts where hw_id='" + hw_id
 					+ "' and student_id='" + user_id + "'";
-			System.out.println(getAttempt);
+			
 			PreparedStatement ps = conn.prepareStatement(getAttempt);
 			ResultSet getAttempt_result = ps.executeQuery();
 			int i = 1;
-			System.out.println("Attempt For HW ID :" + hw_id);
+			
 			while (getAttempt_result.next()) {
 				System.out.println(i++ + ". " + getAttempt_result.getString(1));
 			}
@@ -225,14 +225,14 @@ public class StudentProcessor {
 			String getopenHW = "select * from open_HW_ForCourse where course_id='" + courseId + "'";
 			// String getopenHW = "SELECT * FROM homework WHERE hw_end_date >
 			// TRUNC(sysdate) AND course_id='" + courseId + "'";
-			System.out.println(getopenHW);
+			;
 			PreparedStatement ps = conn.prepareStatement(getopenHW);
 			ResultSet getCoursesForStudent_result = ps.executeQuery();
 
-			System.out.println(getCoursesForStudent_result.next());
+		
 
 			List<HomeWork> listHW = convertResultSetToHWPOJO(getCoursesForStudent_result);
-			System.out.println("HW NAME : " + listHW.get(0).getHW_name());
+			
 			return listHW;
 
 		} catch (Exception e) {
@@ -324,11 +324,11 @@ public class StudentProcessor {
 			String getAttempt = "select distinct(attempt_id) from incomplete_attempts where hw_id = '" + hw_id
 					+ "' AND course_id = '" + courseId + "' AND student_id = '" + user_id + "'";
 
-			System.out.println("GETATTEMPT = " + getAttempt);
+			
 
 			PreparedStatement ps = conn.prepareStatement(getAttempt);
 			ResultSet set = ps.executeQuery();
-			System.out.println("Get attempt executed!");
+			
 			while (set.next()) {
 				a_id = set.getInt(1);
 				System.out.println(a_id);
@@ -381,7 +381,7 @@ public class StudentProcessor {
 					+ a_id + "','" + courseId + "','" + hw_id + "','" + user_id + "','" + q_id + "')";
 			PreparedStatement ps = conn.prepareStatement(retrieve_ques);
 			ps.execute();
-			System.out.println("QUERY SUCCESSFUL!");
+			
 			String retrieve_ques_id = "SELECT q_id FROM temp_retrieve_ques WHERE course_id = '" + courseId
 					+ "' AND hw_id = '" + hw_id + "'AND student_id = '" + user_id + "'AND attempt_id = '" + a_id + "'";
 			Connection conn1 = Session.getConnection();
@@ -389,7 +389,7 @@ public class StudentProcessor {
 			ResultSet set = ps1.executeQuery();
 			while (set.next()) {
 				q_id = set.getString(1);
-				System.out.println(q_id);
+				
 			}
 			Connection conn2 = Session.getConnection();
 			String delete_temp = "TRUNCATE table temp_retrieve_ques";

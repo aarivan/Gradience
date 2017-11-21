@@ -17,6 +17,7 @@ import org.csc540.pojo.CourseEnrollment;
 import org.csc540.pojo.HomeWork;
 import org.csc540.pojo.HwQuestion;
 import org.csc540.pojo.Professor;
+import org.csc540.pojo.Question;
 import org.csc540.pojo.Report;
 import org.csc540.pojo.Topic;
 import org.csc540.processor.ProfessorProcessor;
@@ -36,7 +37,7 @@ public class ProfessorAccount {
 			System.out.println("\n\n::: Instructor Home Page :::");
 			System.out.println(
 					"Enter the options for following actions: \n1. View/Edit Profile \n2. View Courses \n3. Add Courses \n4. Enroll a Student \n5. Drop a Student \n6. View Report \n7. Setup TA \n"
-							+ "8.View/Edit HW Exercises \n9.Add HW Excercises \n10. Search/Add​ ​questions​ ​to​ ​Question​ ​Bank \n"
+							+ "8.View/Edit HW Exercises \n9.Add HW Excercises \n10. Add​ ​questions​ ​to​ ​Question​ ​Bank \n"
 							+ "11. Add/Remove Questions from Exercises \n12. Log Out \nEnter your option:");
 			selection = scanner.nextInt();
 			int newChoice;
@@ -898,24 +899,54 @@ public class ProfessorAccount {
 		int selection = 12;
 		while (selection != 0) {
 			System.out.println("\n\n Homework: " + homeWork.getHW_name() + "\n");
-			System.out.println("1. Add Questions \n2. Remove Questions \nPress 0 to exit\n\n");
-			selection = scanner.nextInt();
-			switch (selection) {
-			case 0:
+			// Search/Add/remove Ques 2. Add topic to HW
+			System.out.println("\n 1. Search/Add/Remove Questions \n Press 0 to Exit \n\n");
+			int choice = scanner.nextInt();
+			if(choice == 1){
+				System.out.println("1. Add Questions \n2. Remove Questions \nPress 0 to exit\n\n");
+				selection = scanner.nextInt();
+				switch (selection) {
+				case 0:
+					selection = 0;
+					break;
+				case 1:
+					List<Question> ques_list = listQuestionsfromHWTopics(homeWork,scanner);
+					if(ques_list.size() != 0){
+						addQuestionstoExercise(homeWork, ques_list, scanner);
+					} else {
+						System.out.println("\n Please add questions to this topic before adding questions to this homework!\n");
+					}
+					break;
+				case 2:
+					removeQuestionsfromExercise(homeWork, scanner);
+					break;
+				default:
+					System.out.println("\nInvalid choice. Please enter a valid choice !!\n");
+				}
+			} else if(choice == 0){
 				selection = 0;
-				break;
-			case 1:
-				addQuestionstoExercise(homeWork, scanner);
-				break;
-			case 2:
-				removeQuestionsfromExercise(homeWork, scanner);
-				break;
-			default:
+			} else {
 				System.out.println("\nInvalid choice. Please enter a valid choice !!\n");
 			}
-
 		}
 
+	}
+
+	private static List<Question> listQuestionsfromHWTopics(HomeWork homeWork, Scanner scanner) {
+		System.out.println("\nList of Questions: \n");
+		List<Question> ques_list = ProfessorProcessor.listQuesForTopic(homeWork.getTopic_id());
+		if(ques_list.size() != 0) {
+			System.out.println("\nQuestion ID \t | Question Difficulty Level \t | Question Text \n");
+			for(int i=0;i<ques_list.size();i++) 
+			{
+				System.out.println(ques_list.get(i).getQ_id()+" \t\t | "+ ques_list.get(i).getDiff_level() +"\t\t\t\t | "+ques_list.get(i).getQuestion());			
+			}
+			
+		} else {
+			System.out.println("\n There are no questions for this topic!\n");
+			
+		}
+		return ques_list;
 	}
 
 	public static void removeQuestionsfromExercise(HomeWork homeWork, Scanner scanner) {
@@ -943,17 +974,27 @@ public class ProfessorAccount {
 
 	}
 
-	public static void addQuestionstoExercise(HomeWork homeWork, Scanner scanner) {
+	public static void addQuestionstoExercise(HomeWork homeWork, List<Question> ques_list, Scanner scanner) {
 
 		String q_id = "Y";
 		do {
-			System.out.println("\n\n Homework: " + homeWork.getHW_name() + "\n");
+			System.out.println("\n\n Homework: " + homeWork.getHW_name() + "\t | Difficulty level: "+homeWork.getDiff_level());
 			System.out.println("Enter a question ID to add into this Homework: ");
 			scanner.nextLine();
 			q_id = scanner.nextLine();
-
-			ProfessorProcessor.addQuestiontoExercise(homeWork.getHw_id(), q_id, homeWork.getCourse_id());
-
+			Boolean flag = false;
+			for(int i=0;i<ques_list.size();i++) {
+				if(ques_list.get(i).getQ_id().equals(q_id)){
+					flag = true;
+				}
+			}
+			if(flag) {
+				ProfessorProcessor.addQuestiontoExercise(homeWork.getHw_id(), q_id, homeWork.getCourse_id());
+			}
+			else {
+				System.out.println("\n\n Invalid Question ID entered!\n\n");
+			}
+			
 			System.out.println("Do you want to add another question? (Y/N)");
 			q_id = scanner.next();
 

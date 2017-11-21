@@ -19,6 +19,7 @@ import org.csc540.pojo.CourseTopicMapping;
 import org.csc540.pojo.HomeWork;
 import org.csc540.pojo.HwQuestion;
 import org.csc540.pojo.Professor;
+import org.csc540.pojo.Question;
 import org.csc540.pojo.Report;
 import org.csc540.pojo.Topic;
 import org.csc540.pojo.Users;
@@ -576,5 +577,52 @@ public class ProfessorProcessor {
 		return null;
 
 	}
+
+	public static List<Question> listQuesForTopic(String topic_id) {
+		List<Question> ques_list = null;
+		try {
+			Connection conn = Session.getConnection();
+			String getReport = "select * from Question where topic_id = '" + topic_id + "'";
+			PreparedStatement ps = conn.prepareStatement(getReport);
+			ResultSet Studreport_result = ps.executeQuery();
+			ques_list = ProfessorProcessor.convertResultQuestionPOJO(Studreport_result);
+			return ques_list;
+
+		} catch (Exception e) {
+			LOG.error("Exception while processing  view Report ", e);
+		}
+		return null;
+		
+	}
+
+	public static List<Question> convertResultQuestionPOJO(ResultSet set) {
+		List<Question> result = null;
+		try {
+			result = new ArrayList<Question>();
+			while (set.next()) {
+				Question temp = new Question();
+				int diff_level = set.getInt("diff_level");
+				temp.setDiff_level(diff_level);
+				String hint = set.getString("hint");
+				temp.setHint(hint);
+				String q_expln = set.getString("q_expln");
+				temp.setQ_expln(q_expln);
+				String q_id = set.getString("q_id");
+				temp.setQ_id(q_id);
+				String question = set.getString("question");
+				temp.setQuestion(question);
+				String topic_id = set.getString("topic_id");
+				temp.setTopic_id(topic_id);
+				String type = set.getString("topic_id");
+				temp.setType(type);
+				result.add(temp);
+			}
+		} catch (Exception e) {
+			LOG.error("Exception while converting the Result Set to Question POJO", e);
+		}
+		return result;
+	}
+
+
 
 }
