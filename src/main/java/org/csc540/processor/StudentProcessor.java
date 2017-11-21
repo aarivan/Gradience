@@ -132,6 +132,7 @@ public class StudentProcessor {
 			PreparedStatement ps = conn.prepareStatement(getCoursesForStudent);
 			ResultSet getCoursesForStudent_result = ps.executeQuery();
 			int i = 1;
+			
 			while (getCoursesForStudent_result.next()) {
 				System.out.println(i++ + ". " + getCoursesForStudent_result.getString(1));
 				courseIDForStudents.add(getCoursesForStudent_result.getString(1));
@@ -140,7 +141,6 @@ public class StudentProcessor {
 		} catch (Exception e) {
 			LOG.error("Exception while processing courses for students.getCoursesOfStudent", e);
 		}
-
 		return courseIDForStudents;
 	}
 
